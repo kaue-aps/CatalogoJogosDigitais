@@ -15,3 +15,16 @@ O **Catálogo de Jogos Digitais** é uma aplicação voltada para o gerenciament
 - **Coleções Personalizadas:** Organização de jogos em listas customizadas (ex: *Favoritos*, *Zerados 2026*).
 - **Relatórios Estatísticos:** Métricas de tempo total jogado, média de avaliações, top 5 mais jogados e percentuais de status.
 - **Persistência de Dados:** Salvamento em arquivos JSON ou banco SQLite.
+
+---
+
+## 🏗️ Estrutura de Classes
+
+Abaixo consta um resumo simplificado das classes empregadas no projeto. Informações mais detalhadas sobre cada classe podem ser encontradas no [Diagrama de Classes UML](docs/diagrama_classes_uml.md).
+
+- Jogo
+- JogoCampanha (Herda de Jogo)
+- JogoCooperativo (Herda de Jogo)
+- JogoCompetitivo (Herda de Jogo)
+- Colecao (Agregação de Jogos)
+- Usuario (Agregação de Coleções)
