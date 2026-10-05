@@ -1,3 +1,5 @@
+"""Módulo contendo classe principal de jogo para uma experiência genérica de jogatina"""
+
 class Jogo:
     """Representa a classe base de um jogo no catálogo.
 
@@ -74,6 +76,30 @@ class Jogo:
         else:
             self._horas_jogadas = horas
 
+    def __str__(self) -> str:
+        """Retorna um resumo amigável e formatado do jogo em formato de card."""
+
+        icones_status = {
+            "NÃO INICIADO": "⏳ [Não Iniciado]",
+            "JOGANDO": "🎮 [Jogando]",
+            "FINALIZADO": "🏆 [Finalizado]"
+        }
+        
+        statusf = icones_status.get(self.status, self.status) # O segundo argumento repetido é um fallback caso não haja chave correspondente
+        notaf = f"{self._avaliacao:.1f}/10" if self._avaliacao is not None else "Sem nota"
+
+        
+        resumo = (
+            f"\n┌────────── 🕹️  {self._titulo.upper()} ──────────┐\n"
+            f"│ 📂 Gênero: {self.genero:<18}\n"
+            f"│ 💻 Plataforma: {self.plataforma:<14}\n"
+            f"│ ⏱️ Horas Jogadas: {self._horas_jogadas:<8.1f}h\n"
+            f"│ ⭐ Avaliação: {notaf:<17}\n"
+            f"│ 📌 Status: {statusf:<20}\n"
+            f"└───────────────────────────────────────────────────┘"
+        )
+    
+        return resumo
 
     def registrar_progresso(self, horas: float) -> None:
         """Incrementa as horas jogadas e atualiza o status do jogo.
