@@ -88,15 +88,15 @@ class Jogo:
         statusf = icones_status.get(self.status, self.status) # O segundo argumento repetido é um fallback caso não haja chave correspondente
         notaf = f"{self._avaliacao:.1f}/10" if self._avaliacao is not None else "Sem nota"
 
-        
+        comprimento_titulo = len(f"────────── 🕹️ {self._titulo.upper()} ──────────")
         resumo = (
-            f"\n┌────────── 🕹️  {self._titulo.upper()} ──────────┐\n"
-            f"│ 📂 Gênero: {self.genero:<18}\n"
-            f"│ 💻 Plataforma: {self.plataforma:<14}\n"
-            f"│ ⏱️ Horas Jogadas: {self._horas_jogadas:<8.1f}h\n"
-            f"│ ⭐ Avaliação: {notaf:<17}\n"
-            f"│ 📌 Status: {statusf:<20}\n"
-            f"└───────────────────────────────────────────────────┘"
+            f"\n┌────────── 🕹️  {self._titulo.upper()} ──────────┐\n\n"
+            f"   📂 Gênero: {self.genero}\n"
+            f"   💻 Plataforma: {self.plataforma}\n"
+            f"   ⏱️  Horas Jogadas: {self._horas_jogadas:.1f}\n"
+            f"   ⭐ Avaliação: {notaf}\n"
+            f"   📌 Status: {statusf}\n\n"
+            f"└{comprimento_titulo * '─'}┘"
         )
     
         return resumo
@@ -138,4 +138,3 @@ class Jogo:
         """
 
         self.avaliacao = nota # Irá invocar o setter de avaliação
-
