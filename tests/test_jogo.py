@@ -9,7 +9,7 @@ if str(raiz_do_projeto) not in sys.path:
 # Agora sim posso importar só o que eu quero sem precisar ficar fazendo referência na hora de usar
 from src.models.jogos import Jogo
 
-def test_registro_de_progresso():
+def test_deve_alterar_status_e_contabilizar_horas_ao_registrar_progresso():
     j1 = Jogo("Doom", "Ação", "PC")
 
     j1.registrar_progresso(3)
@@ -17,7 +17,7 @@ def test_registro_de_progresso():
     assert j1._horas_jogadas == 3
     assert j1.status == "JOGANDO"
 
-def test_finalizar_jogo():
+def test_deve_alterar_status_e_verificar_horas_jogadas_ao_tentar_finalizar_jogo():
     j1 = Jogo("Doom", "Ação", "PC")
 
     j1.registrar_progresso(2)
@@ -26,7 +26,7 @@ def test_finalizar_jogo():
     assert j1.status == "FINALIZADO"
     assert j1._horas_jogadas >= 1
 
-def test_avaliar_jogo():
+def test_deve_armazenar_avaliacao_ao_avaliar_jogo():
     j1 = Jogo("Doom", "Ação", "PC")
 
     j1.registrar_progresso(2)
