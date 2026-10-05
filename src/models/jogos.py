@@ -76,6 +76,19 @@ class Jogo:
         else:
             self._horas_jogadas = horas
 
+    def __repr__(self) -> str:
+        """Retorna uma mensagem técnica para o desenvolvedor com fins de depuração"""
+        return (
+        f"Jogo("
+        f"titulo={self._titulo!r}, "
+        f"genero={self.genero!r}, "
+        f"plataforma={self.plataforma!r}, "
+        f"status={self.status!r}, "
+        f"horas_jogadas={self._horas_jogadas!r}, "
+        f"avaliacao={self._avaliacao!r}"
+        f")"
+    )
+
     def __str__(self) -> str:
         """Retorna um resumo amigável e formatado do jogo em formato de card."""
 
@@ -100,6 +113,19 @@ class Jogo:
         )
     
         return resumo
+
+    def __eq__(self, outro_jogo: Jogo) -> bool:
+        """Verifica se um jogo é igual a outro com base no título e na plataforma de ambos"""
+
+        if self._titulo == outro_jogo._titulo and self.plataforma == outro_jogo.plataforma:
+            return True
+        else:
+            return False
+
+    def __lt__(self, outro_jogo: Jogo) -> bool:
+        """Verifica se um jogo tem menos horas jogadas em relação a outro"""
+
+        return self._horas_jogadas < outro_jogo._horas_jogadas
 
     def registrar_progresso(self, horas: float) -> None:
         """Incrementa as horas jogadas e atualiza o status do jogo.
