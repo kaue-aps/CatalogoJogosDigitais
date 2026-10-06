@@ -1,5 +1,7 @@
 """Módulo contendo classe principal de jogo para uma experiência genérica de jogatina"""
 
+from datetime import date
+
 class Jogo:
     """Representa a classe base de um jogo no catálogo.
 
@@ -13,6 +15,8 @@ class Jogo:
         status (str): Estado atual do jogo ('NÃO INICIADO', 'JOGANDO', 'FINALIZADO').
         horas_jogadas (float): Total de horas acumuladas de jogatina (deve ser >= 0).
         avaliacao (float): Nota do jogo de 0 a 10 (atribuível apenas quando finalizado).
+        data_inicio (date): Data que o jogo foi jogado pela primeira vez.
+        data_termino (date): Data que o jogo foi finalizado.
     """
 
     def __init__(self, titulo: str, genero: str, plataforma: str) -> None:
@@ -23,6 +27,8 @@ class Jogo:
         self.status = "NÃO INICIADO"
         self._horas_jogadas = 0
         self._avaliacao = None
+        self._data_inicio = None
+        self._data_termino = None
 
         # Irá ativar o setter de "titulo" logo na inicialização da classe
         self.titulo = titulo
@@ -75,6 +81,32 @@ class Jogo:
             raise ValueError("Não é permitido configurar as horas jogadas para valores abaixo de zero")
         else:
             self._horas_jogadas = horas
+
+    @property
+    def data_inicio(self) -> str:
+        """Retorna a data de início do jogo formatada no padrão brasileiro"""
+        if self._data_inicio is not None:
+            dataf = self._data_inicio.strftime("%d/%m/Y")
+            return dataf
+        else:
+            raise AttributeError("O jogo ainda não foi iniciado, logo não possui data de início.")
+
+    @data_inicio.setter
+    def data_inicio(self, data: date) -> None:
+        raise PermissionError("Não é possível mudar a data de início de um jogo manualmente")
+
+    @property
+    def data_termino(self) -> str:
+        """Retorna a data de término do jogo formatada no padrão brasileiro"""
+        if self._data_termino is not None:
+            dataf = self._data_termino.strftime("%d/%m/Y")
+            return dataf
+        else:
+            raise AttributeError("O jogo ainda não foi finalizado, logo não possui data de término.")
+
+    @data_termino.setter
+    def data_termino(self, data: date) -> None:
+        raise PermissionError("Não é possível mudar a data de término de um jogo manualmente")
 
     def __repr__(self) -> str:
         """Retorna uma mensagem técnica para o desenvolvedor com fins de depuração"""
@@ -141,6 +173,8 @@ class Jogo:
             self._horas_jogadas += horas
             if self.status != "JOGANDO":
                 self.status = "JOGANDO"
+            if self._horas_jogadas == 0:
+                self._data_inicio = date.today()
         else:
             raise ValueError("Horas negativas não são incrementadas")
 
@@ -155,6 +189,13 @@ class Jogo:
             raise PermissionError("Só é possível finalizar um jogo depois de pelo menos 1 hora de jogatina.")
         else:
             self.status = "FINALIZADO"
+            self._data_termino = date.today()
+
+    def reiniciar_jogo(self) -> None:
+        """Marca o jogo como 'JOGANDO', anula as horas jogadas e redefine a data de início"""
+        self.status = "JOGANDO"
+        self._horas_jogadas = 0
+        self._data_inicio = date.today()
 
     def avaliar_jogo(self, nota: float) -> None:
         """Atribui uma nota ao jogo depois de finalizado
