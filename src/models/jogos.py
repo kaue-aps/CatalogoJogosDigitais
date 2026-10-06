@@ -86,7 +86,7 @@ class Jogo:
     def data_inicio(self) -> str:
         """Retorna a data de início do jogo formatada no padrão brasileiro"""
         if self._data_inicio is not None:
-            dataf = self._data_inicio.strftime("%d/%m/Y")
+            dataf = self._data_inicio.strftime("%d/%m/%Y")
             return dataf
         else:
             raise AttributeError("O jogo ainda não foi iniciado, logo não possui data de início.")
@@ -99,7 +99,7 @@ class Jogo:
     def data_termino(self) -> str:
         """Retorna a data de término do jogo formatada no padrão brasileiro"""
         if self._data_termino is not None:
-            dataf = self._data_termino.strftime("%d/%m/Y")
+            dataf = self._data_termino.strftime("%d/%m/%Y")
             return dataf
         else:
             raise AttributeError("O jogo ainda não foi finalizado, logo não possui data de término.")
@@ -117,7 +117,9 @@ class Jogo:
         f"plataforma={self.plataforma!r}, "
         f"status={self.status!r}, "
         f"horas_jogadas={self._horas_jogadas!r}, "
-        f"avaliacao={self._avaliacao!r}"
+        f"avaliacao={self._avaliacao!r}, "
+        f"data_inicio={self._data_inicio!r}, "
+        f"data_termino={self._data_termino!r}"
         f")"
     )
 
@@ -125,22 +127,27 @@ class Jogo:
         """Retorna um resumo amigável e formatado do jogo em formato de card."""
 
         icones_status = {
-            "NÃO INICIADO": "⏳ [Não Iniciado]",
-            "JOGANDO": "🎮 [Jogando]",
-            "FINALIZADO": "🏆 [Finalizado]"
+            "NÃO INICIADO": "[Não Iniciado]",
+            "JOGANDO": "[Jogando]",
+            "FINALIZADO": "[Finalizado]"
         }
-        
-        statusf = icones_status.get(self.status, self.status) # O segundo argumento repetido é um fallback caso não haja chave correspondente
+
+        # Formatação de alguns atributos para facilitar os prints:
+        statusf = icones_status.get(self.status, self.status) # O segundo argumento repetido é um fallback, caso não haja chave correspondente aí ele retorna o próprio argumento
         notaf = f"{self._avaliacao:.1f}/10" if self._avaliacao is not None else "Sem nota"
+        data_iniciof = self.data_inicio if self._data_inicio is not None else ""
+        data_terminof = self.data_termino if self._data_termino is not None else ""
 
         comprimento_titulo = len(f"────────── 🕹️ {self._titulo.upper()} ──────────")
         resumo = (
             f"\n┌────────── 🕹️  {self._titulo.upper()} ──────────┐\n\n"
-            f"   📂 Gênero: {self.genero}\n"
-            f"   💻 Plataforma: {self.plataforma}\n"
-            f"   ⏱️  Horas Jogadas: {self._horas_jogadas:.1f}\n"
-            f"   ⭐ Avaliação: {notaf}\n"
-            f"   📌 Status: {statusf}\n\n"
+            f"  📂 Gênero: {self.genero}\n"
+            f"  💻 Plataforma: {self.plataforma}\n"
+            f"  ⏱️  Horas Jogadas: {self._horas_jogadas:.1f}\n"
+            f"  ⭐ Avaliação: {notaf}\n"
+            f"  📌 Status: {statusf}\n"
+            f"  📆 Data de Início: {data_iniciof}\n"
+            f"  🗓️  Data de Término: {data_terminof}\n\n"
             f"└{comprimento_titulo * '─'}┘"
         )
     
@@ -162,6 +169,8 @@ class Jogo:
     def registrar_progresso(self, horas: float) -> None:
         """Incrementa as horas jogadas e atualiza o status do jogo.
 
+        Define a data de início do jogo caso seja a primeira gameplay
+        
         Args:
             horas (float): Quantidade de horas adicionadas na sessão.
 
@@ -170,11 +179,11 @@ class Jogo:
         """
 
         if horas > 0:
+            if self._horas_jogadas == 0:
+                self._data_inicio = date.today()
             self._horas_jogadas += horas
             if self.status != "JOGANDO":
                 self.status = "JOGANDO"
-            if self._horas_jogadas == 0:
-                self._data_inicio = date.today()
         else:
             raise ValueError("Horas negativas não são incrementadas")
 
