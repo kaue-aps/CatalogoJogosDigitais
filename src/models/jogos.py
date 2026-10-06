@@ -201,10 +201,11 @@ class Jogo:
             self._data_termino = date.today()
 
     def reiniciar_jogo(self) -> None:
-        """Marca o jogo como 'JOGANDO', anula as horas jogadas e redefine a data de início"""
+        """Marca o jogo como 'JOGANDO', anula as horas jogadas e redefine as datas de início e de término"""
         self.status = "JOGANDO"
         self._horas_jogadas = 0
         self._data_inicio = date.today()
+        self._data_termino = None
 
     def avaliar_jogo(self, nota: float) -> None:
         """Atribui uma nota ao jogo depois de finalizado
