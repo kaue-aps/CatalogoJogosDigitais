@@ -9,9 +9,12 @@ classDiagram
         -str status
         -float horas_jogadas
         -float avaliacao
+        -date data_inicio
+        -date data_termino
         +registrar_progresso()
         +finalizar_jogo()
         +reiniciar_jogo()
+        +avaliar_jogo()
     }
 
     class JogoCampanha {
