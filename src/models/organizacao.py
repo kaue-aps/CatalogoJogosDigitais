@@ -7,9 +7,31 @@ class Colecao:
         self.nome = nome
         self.jogos = jogos
 
+    def __str__(self):
+        """Retorna um resumo amigável e formatado da coleção em formato de card."""
+
+        titulo = f"\n┌───────────────────── 📂 {self.nome.upper()} ─────────────────────┐\n\n"
+        comprimento_titulo = len(f"───────────────────── 📂 {self.nome.upper()} ─────────────────────")
+
+        mensagem = f"{'TÍTULO':<28}{'GÊNERO':<18}{'PLATAFORMA':<14}\n"
+        for jogo in self.jogos:
+            mensagem += f"🎮 {jogo.titulo:<25}🚩 {jogo.genero:<15}💻 {jogo.plataforma:<12}\n"
+
+        linha_final = f"\n└─{comprimento_titulo * '─'}┘"
+
+        mensagem_final = titulo + mensagem + linha_final
+
+        return mensagem_final
+
+
     def __eq__(self, outra_colecao: Colecao) -> bool:
         """Verifica se duas coleções possuem o mesmo nome e os mesmos jogos e se, portanto, são iguais"""
-        if self.nome == outra_colecao.nome and self.jogos == outra_colecao.jogos:
+
+        # Compara com base no nome e sem considerar a ordem dos jogos na lista
+        if self.nome == outra_colecao.nome:
+            for jogo in self.jogos:
+                if jogo not in outra_colecao.jogos:
+                    return False
             return True
         else:
             return False
