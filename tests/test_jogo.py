@@ -1,12 +1,3 @@
-# Manipulação abaixo possiblita importar somente as classes que eu quero sem emitir ModuleNotFoundError
-import sys
-from pathlib import Path
-
-raiz_do_projeto = Path(__file__).parent.parent
-if str(raiz_do_projeto) not in sys.path:
-    sys.path.append(str(raiz_do_projeto))
-
-# Agora sim posso importar só o que eu quero sem precisar ficar fazendo referência de módulo na hora de usar
 from src.models.jogos import Jogo
 
 from datetime import date
