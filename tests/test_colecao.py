@@ -18,5 +18,5 @@ def colecao_cheia():
 def test_erro_ao_adicionar_mesmo_jogo_na_colecao(colecao_cheia):
     r2 = Jogo("RDR 2", "Ação", "Console")
     
-    with pytest.raises(ValueError):
+    with pytest.raises(PermissionError):
         colecao_cheia.adicionar_jogo(r2)

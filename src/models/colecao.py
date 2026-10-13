@@ -47,7 +47,7 @@ class Colecao:
         if jogo not in self.jogos:
             self.jogos.append(jogo)
         else:
-            raise ValueError("O mesmo jogo não pode ser adicionado à coleção mais de uma vez")
+            raise PermissionError("O mesmo jogo não pode ser adicionado à coleção mais de uma vez")
 
     def remover_jogo(self, jogo: Jogo) -> None:
         """Remove o jogo da lista de jogos"""
