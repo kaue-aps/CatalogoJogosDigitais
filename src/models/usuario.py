@@ -19,6 +19,40 @@ class Usuario:
 
         self.colecoes = colecoes
 
+    def __gt__(self, outro_usuario: Usuario) -> bool:
+        """Verifica se um usuário é 'maior' do que outro com base no número de coleções"""
+
+        if len(self.colecoes) > len(outro_usuario.colecoes):
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        """Retorna um resumo amigável do usuário e de suas coleções"""
+
+        titulo = f"\n┌────────────────── 🥸 {self.nome.upper()} ──────────────────┐\n\n"
+        comprimento_titulo = len(f"────────────────── 🥸 {self.nome.upper()} ──────────────────")
+
+        mensagem = f"📗 QUANTIDADE DE COLEÇÕES: {len(self.colecoes)}\n"
+        mensagem += f"👾 TOTAL DE JOGOS: "
+
+        qtd_jogos = 0
+        for colecao in self.colecoes:
+            for jogo in colecao.jogos:
+                qtd_jogos += 1
+
+        mensagem += str(qtd_jogos) + "\n"
+
+        linha_final = f"\n└─{comprimento_titulo * '─'}┘"
+        mensagem_final = titulo + mensagem + linha_final
+
+        return mensagem_final
+
+    def __repr__(self):
+        """Retorna uma mensagem técnica para o desenvolvedor com fins de depuração"""
+
+        return f"Usuario(nome={self.nome!r}, colecoes={self.colecoes!r})"
+
     def criar_colecao(self, nome_colecao: str) -> Colecao:
         """Adiciona uma nova coleção ao dicionário de coleções.
 
@@ -67,4 +101,36 @@ class Usuario:
 
         colecao = self.colecoes[chave]
         return colecao
+
+    def listar_colecoes(self) -> str:
+        """Retorna uma string enxuta com o nome de todas as coleções do usuário por ordem de inserção"""
+
+        nome_do_usuario_com_espaco = f" {self.nome} "
+        mensagem = f"{nome_do_usuario_com_espaco:=^48}\n"
+
+        # Ao iterar usando o método values(), pegamos o nome 
+        # da coleção tal qual como foi criada e não as chaves que são todas minúsculas
+        for colecao in self.colecoes.values():
+            mensagem += f"{colecao:^48}\n"
+
+        return mensagem
+
+    def deletar_colecao(self, nome_colecao: str) -> None:
+        """Exclui uma coleção do usuário de coleções do usuário
+
+        Args:
+            nome_colecao (str): é case-insensitive
         
+        Raises:
+            ValueError: caso o nome da coleção seja inválido (vazio)
+            KeyError: caso o nome da coleção não conste no dicionário"""
+
+        nome_limpo = nome_colecao.strip()
+        chave = nome_limpo.lower()
+        if chave == "":
+            raise ValueError("Nome de coleção inválido (vazio)")
+        
+        if chave not in self.colecoes:
+            raise KeyError(f"A coleção {nome_limpo} não consta na lista de coleções")
+
+        del self.colecoes[chave]
