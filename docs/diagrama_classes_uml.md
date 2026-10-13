@@ -54,6 +54,8 @@ classDiagram
         -dict~str, Colecao~ colecoes
         +criar_colecao()
         +obter_colecao()
+        +listar_colecoes()
+        +deletar_colecao()
     }
 
     Jogo <|-- JogoCampanha
