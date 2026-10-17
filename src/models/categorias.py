@@ -1,6 +1,6 @@
 """Módulo contendo subclasses de jogos para diferentes experiências de jogatina."""
 
-from src.models.jogos import Jogo
+from src.models.jogo import Jogo
 
 class JogoCampanha(Jogo):
     """Representa um jogo focado em modo história/campanha com capítulos.

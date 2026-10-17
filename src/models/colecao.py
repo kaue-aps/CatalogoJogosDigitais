@@ -1,4 +1,4 @@
-from src.models.jogos import Jogo
+from src.models.jogo import Jogo
 
 class Colecao:
     """Gerencia uma lista de objetos do tipo Jogo"""

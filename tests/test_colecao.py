@@ -1,5 +1,5 @@
 from src.models.colecao import Colecao
-from src.models.jogos import Jogo
+from src.models.jogo import Jogo
 import pytest
 
 @pytest.fixture

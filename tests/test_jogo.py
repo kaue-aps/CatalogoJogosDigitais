@@ -1,6 +1,6 @@
 """Módulo de testes unitários para a classe Jogo"""
 
-from src.models.jogos import Jogo
+from src.models.jogo import Jogo
 
 from datetime import date
 import pytest
