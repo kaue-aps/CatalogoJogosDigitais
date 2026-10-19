@@ -6,6 +6,7 @@ class Colecao:
     def __init__(self, nome: str, jogos: list[Jogo] = []):
         self.nome = nome
         self.jogos = jogos
+        self.id = None
 
     def __str__(self):
         """Retorna um resumo amigável e formatado da coleção em formato de card."""
@@ -62,3 +63,18 @@ class Colecao:
             mensagem += f"{jogo.titulo:^48}\n"
 
         return mensagem
+
+    def to_dict(self):
+        return {
+            "nome": self.nome,
+            "jogos": self.jogos,
+            "id": self.id
+        }
+
+
+    @classmethod
+    def from_dict(cls, dados):
+        colecao = Colecao(dados["nome"], dados["jogos"])
+        colecao.id = dados["id"]
+
+        return colecao

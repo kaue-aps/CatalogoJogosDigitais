@@ -58,7 +58,31 @@ class JogoCampanha(Jogo):
         # Caso o avanço ultrapasse o limite, ele apenas conclui o jogo inteiro
         else:
             self._capitulos_concluidos = self._capitulos_totais
-        
+
+
+    def to_dict(self):
+        dados = super().to_dict()
+
+        dados["capitulos_totais"] = self._capitulos_totais
+        dados["capitulos_concluidos"] = self._capitulos_concluidos
+
+        return dados
+
+
+    @classmethod
+    def from_dict(cls, dados):
+        jogo_campanha = JogoCampanha(dados["titulo"], dados["genero"], dados["plataforma"])
+        jogo_campanha.status = dados["status"]
+        jogo_campanha._horas_jogadas = dados["horas_jogadas"]
+        jogo_campanha._avaliacao = dados["avaliacao"]
+        jogo_campanha._data_inicio = dados["data_inicio"]
+        jogo_campanha._data_termino = dados["data_termino"]
+        jogo_campanha.id = dados["id"]
+        jogo_campanha._capitulos_totais = dados["capitulos_totais"]
+        jogo_campanha._capitulos_concluidos = dados["capitulos_concluidos"]
+
+        return jogo_campanha
+
 
 class JogoCompetitivo(Jogo):
     """Representa um jogo focado em partidas competitivas e rankings.
@@ -70,7 +94,7 @@ class JogoCompetitivo(Jogo):
         ranking_atual (str): Patamar atual no jogo (ex: 'Gold', 'Diamond').
     """
 
-    def __init__(self, titulo: str, genero: str, plataforma: str, ranking_atual: str = "Unranked") -> None:
+    def __init__(self, titulo: str, genero: str, plataforma: str) -> None:
         """Inicializa um jogo competitivo com estatísticas de partidas zeradas."""
 
         super().__init__(titulo, genero, plataforma)
@@ -78,7 +102,7 @@ class JogoCompetitivo(Jogo):
         self._partidas_jogadas = 0
         self._vitorias = 0
         self._derrotas = 0
-        self._ranking_atual = ranking_atual
+        self._ranking_atual = "Unranked"
 
 
     @property
@@ -156,6 +180,34 @@ class JogoCompetitivo(Jogo):
             raise ValueError("O novo ranking não pode ser igual ao atual.")
 
 
+    def to_dict(self):
+        dados = super().to_dict()
+
+        dados["partidas_jogadas"] = self._partidas_jogadas
+        dados["vitorias"] = self._vitorias
+        dados["derrotas"] = self._derrotas
+        dados["ranking_atual"] = self._ranking_atual
+
+        return dados
+
+    
+    @classmethod
+    def from_dict(cls, dados):
+        jogo_competitivo = JogoCompetitivo(dados["titulo"], dados["genero"], dados["plataforma"])
+        jogo_competitivo.status = dados["status"]
+        jogo_competitivo._horas_jogadas = dados["horas_jogadas"]
+        jogo_competitivo._avaliacao = dados["avaliacao"]
+        jogo_competitivo._data_inicio = dados["data_inicio"]
+        jogo_competitivo._data_termino = dados["data_termino"]
+        jogo_competitivo.id = dados["id"]
+        jogo_competitivo._partidas_jogadas = dados["partidas_jogadas"]
+        jogo_competitivo._vitorias = dados["vitorias"]
+        jogo_competitivo._derrotas = dados["derrotas"]
+        jogo_competitivo._ranking_atual = dados["ranking_atual"]
+
+        return jogo_competitivo
+    
+
 class JogoCooperativo(Jogo):
     """Representa um jogo com foco em sessões cooperativas e multiplayer local/online.
 
@@ -212,3 +264,28 @@ class JogoCooperativo(Jogo):
         """Incrementa o número de sessões coop concluídas."""
 
         self._sessoes_coop += 1
+
+
+    def to_dict(self):
+        dados = super().to_dict()
+
+        dados["max_jogadores"] = self._max_jogadores
+        dados["sessoes_coop"] = self._sessoes_coop
+        dados["participantes_frequentes"] = self.participantes_frequentes
+
+        return dados
+
+
+    @classmethod
+    def from_dict(cls, dados):
+        jogo_cooperativo = JogoCooperativo(dados["titulo"], dados["genero"], dados["plataforma"], dados["max_jogadores"])
+        jogo_cooperativo.status = dados["status"]
+        jogo_cooperativo._horas_jogadas = dados["horas_jogadas"]
+        jogo_cooperativo._avaliacao = dados["avaliacao"]
+        jogo_cooperativo._data_inicio = dados["data_inicio"]
+        jogo_cooperativo._data_termino = dados["data_termino"]
+        jogo_cooperativo.id = dados["id"]
+        jogo_cooperativo._sessoes_coop = dados["sessoes_coop"]
+        jogo_cooperativo.participantes_frequentes = dados["participantes_frequentes"]
+
+        return jogo_cooperativo

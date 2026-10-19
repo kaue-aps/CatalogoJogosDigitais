@@ -18,6 +18,7 @@ class Usuario:
             self.nome = nome
 
         self.colecoes = colecoes
+        self.id = None
 
     def __gt__(self, outro_usuario: Usuario) -> bool:
         """Verifica se um usuário é 'maior' do que outro com base no número de coleções"""
@@ -51,7 +52,7 @@ class Usuario:
     def __repr__(self):
         """Retorna uma mensagem técnica para o desenvolvedor com fins de depuração"""
 
-        return f"Usuario(nome={self.nome!r}, colecoes={self.colecoes!r})"
+        return f"Usuario(nome={self.nome!r}, colecoes={self.colecoes!r}, id={self.id!r})"
 
     def criar_colecao(self, nome_colecao: str) -> Colecao:
         """Adiciona uma nova coleção ao dicionário de coleções.
@@ -134,3 +135,18 @@ class Usuario:
             raise KeyError(f"A coleção {nome_limpo} não consta na lista de coleções")
 
         del self.colecoes[chave]
+
+
+    def to_dict(self):
+        return {
+            "nome": self.nome,
+            "colecoes": self.colecoes,
+            "id": self.colecoes
+        }
+
+    @classmethod
+    def from_dict(cls, dados):
+        usuario = Usuario(dados["nome"], dados["colecoes"])
+        usuario.id = dados["id"]
+
+        return usuario

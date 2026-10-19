@@ -29,6 +29,7 @@ class Jogo:
         self._avaliacao = None
         self._data_inicio = None
         self._data_termino = None
+        self.id = None
 
         # Irá ativar o setter de "titulo" logo na inicialização da classe
         self.titulo = titulo
@@ -119,7 +120,8 @@ class Jogo:
         f"horas_jogadas={self._horas_jogadas!r}, "
         f"avaliacao={self._avaliacao!r}, "
         f"data_inicio={self._data_inicio!r}, "
-        f"data_termino={self._data_termino!r}"
+        f"data_termino={self._data_termino!r},"
+        f"id={self.id!r}"
         f")"
     )
 
@@ -215,3 +217,28 @@ class Jogo:
         """
 
         self.avaliacao = nota # Irá invocar o setter de avaliação
+
+    def to_dict(self):
+        return{
+            "titulo": self._titulo,
+            "genero": self.genero,
+            "plataforma": self.plataforma,
+            "status": self.status,
+            "horas_jogadas": self._horas_jogadas,
+            "avaliacao": self._avaliacao,
+            "data_inicio": self._data_inicio,
+            "data_termino": self._data_termino,
+            "id": self.id
+        }
+
+    @classmethod
+    def from_dict(cls, dados: dict):
+        jogo = Jogo(dados["titulo"], dados["genero"], dados["plataforma"])
+        jogo.status = dados["status"]
+        jogo._horas_jogadas = dados["horas_jogadas"]
+        jogo._avaliacao = dados["avaliacao"]
+        jogo._data_inicio = dados["data_inicio"]
+        jogo._data_termino = dados["data_termino"]
+        jogo.id = dados["id"]
+
+        return jogo
