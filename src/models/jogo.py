@@ -1,6 +1,6 @@
 """Módulo contendo classe principal de jogo para uma experiência genérica de jogatina"""
 
-from datetime import date
+from datetime import date, datetime
 
 class Jogo:
     """Representa a classe base de um jogo no catálogo.
@@ -226,8 +226,9 @@ class Jogo:
             "status": self.status,
             "horas_jogadas": self._horas_jogadas,
             "avaliacao": self._avaliacao,
-            "data_inicio": self._data_inicio,
-            "data_termino": self._data_termino,
+            # Não podemos guardar objetos date dentro do JSON, para isso chamei o getter que retorna uma string
+            "data_inicio": self.data_inicio if self._data_inicio != None else None,
+            "data_termino": self.data_termino if self._data_termino != None else None,
             "id": self.id
         }
 
@@ -237,8 +238,20 @@ class Jogo:
         jogo.status = dados["status"]
         jogo._horas_jogadas = dados["horas_jogadas"]
         jogo._avaliacao = dados["avaliacao"]
-        jogo._data_inicio = dados["data_inicio"]
-        jogo._data_termino = dados["data_termino"]
+
+        
+        if dados["data_inicio"] != None:
+            # Interpreta data em string e transforma em objeto date
+            jogo._data_inicio = datetime.strptime(dados["data_inicio"], "%d/%m/%Y").date()
+        else:
+            jogo._data_inicio = None
+
+        if dados["data_termino"] != None:
+            # Interpreta data em string e transforma em objeto date
+            jogo._data_termino = datetime.strptime(dados["data_termino"], "%d/%m/%Y").date()
+        else:
+            jogo._data_termino = None
+
         jogo.id = dados["id"]
 
         return jogo
