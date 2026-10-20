@@ -1,4 +1,10 @@
-"""Módulo responsável por calcular estatísticas básicas do catálogo, bem como fazer consultas simples e buscas filtradas"""
+"""
+Serviços de Relatório
+
+Responsabilidades:
+- Calcular estatísticas básicas do catálogo
+- Fazer consultas simples e buscas filtradas
+"""
 
 from src.repositories.persistencia import CatalogoJSON
 from src.models.jogo import Jogo
@@ -20,8 +26,8 @@ def total_de_jogos_cadastrados() -> int:
 def total_de_horas_jogadas() -> float:
     dados = catalogo.carregar()
     horas_jogadas = 0
-    for tipos_de_jogo in dados["jogos"]:
-        for jogo in tipos_de_jogo:
+    for categoria in dados["jogos"].values():
+        for jogo in categoria:
             horas_jogadas += jogo["horas_jogadas"]
 
     return horas_jogadas
@@ -29,8 +35,8 @@ def total_de_horas_jogadas() -> float:
 def media_de_avaliacao_jogos() -> float:
     dados = catalogo.carregar()
     soma = qtd = 0
-    for tipos_de_jogo in dados["jogos"]:
-        for jogo in tipos_de_jogo:
+    for categoria in dados["jogos"]:
+        for jogo in categoria:
             if jogo["avaliacao"] is not None:
                 soma += jogo["avaliacao"]
                 qtd += 1
@@ -42,8 +48,8 @@ def percentual_de_jogos_por_status() -> dict:
     dados = catalogo.carregar()
     nao_iniciados = jogando = finalizados = 0
     total_jogos = 0
-    for tipos_de_jogo in dados["jogos"]:
-            for jogo in tipos_de_jogo:
+    for categoria in dados["jogos"]:
+            for jogo in categoria:
                 if jogo["status"] == "NÃO INICIADO":
                     nao_iniciados += 1
                 elif jogo["status"] == "JOGANDO":
@@ -66,8 +72,8 @@ def percentual_de_jogos_por_status() -> dict:
 def top_5_jogos_mais_jogados():
     dados = catalogo.carregar()
     todos_jogos = []
-    for tipos_de_jogo in dados["jogos"]:
-        for jogo in tipos_de_jogo:
+    for categoria in dados["jogos"]:
+        for jogo in categoria:
             todos_jogos.extend(jogo) # Vai adicionando os jogos em forma de dicionário à lista
 
     jogos_em_ordem_descrescente = sorted(todos_jogos,
