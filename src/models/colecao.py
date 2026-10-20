@@ -1,4 +1,5 @@
 from src.models.jogo import Jogo
+import src.services.jogos_service as servico_jogo
 
 class Colecao:
     """Gerencia uma lista de objetos do tipo Jogo"""
@@ -67,14 +68,14 @@ class Colecao:
     def to_dict(self):
         return {
             "nome": self.nome,
-            "jogos": self.jogos,
+            "id_jogos": [jogo.id for jogo in self.jogos],
             "id": self.id
         }
 
 
     @classmethod
     def from_dict(cls, dados):
-        colecao = Colecao(dados["nome"], dados["jogos"])
+        colecao = Colecao(dados["nome"], [servico_jogo.get_by_id(id) for id in dados["id_jogos"]])
         colecao.id = dados["id"]
 
         return colecao
