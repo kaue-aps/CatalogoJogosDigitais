@@ -31,7 +31,7 @@ def cadastrar_colecao(colecao: Colecao):
         # Faz a comparação com base nos parâmetros do método __eq__ definido na classe de domínio
         if colecao == Colecao.from_dict(colecao_cadastrada):
             raise PermissionError("A coleção informada já está cadastrado no sistema")
-    colecao.id = proximo_id_colecao()
+    colecao._id = proximo_id_colecao()
     dados["colecao"].append(colecao.to_dict())
     catalogo.salvar(dados)
 
