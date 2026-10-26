@@ -15,24 +15,24 @@ class Usuario:
         if nome == "":
             raise ValueError("O nome do usuário não pode ser vazio.")
         else:
-            self.nome = nome
+            self._nome = nome
 
-        self.colecoes = colecoes
-        self.id = None
+        self._colecoes = colecoes
+        self._id = None
 
 
     def __str__(self):
         """Retorna um resumo amigável do usuário e de suas coleções"""
 
-        titulo = f"\n┌────────────────── 🥸 {self.nome.upper()} ──────────────────┐\n\n"
-        comprimento_titulo = len(f"────────────────── 🥸 {self.nome.upper()} ──────────────────")
+        titulo = f"\n┌────────────────── 🥸 {self._nome.upper()} ──────────────────┐\n\n"
+        comprimento_titulo = len(f"────────────────── 🥸 {self._nome.upper()} ──────────────────")
 
-        mensagem = f"📗 QUANTIDADE DE COLEÇÕES: {len(self.colecoes)}\n"
+        mensagem = f"📗 QUANTIDADE DE COLEÇÕES: {len(self._colecoes)}\n"
         mensagem += f"👾 TOTAL DE JOGOS: "
 
         qtd_jogos = 0
-        for colecao in self.colecoes:
-            for jogo in colecao.jogos:
+        for colecao in self._colecoes:
+            for jogo in colecao._jogos:
                 qtd_jogos += 1
 
         mensagem += str(qtd_jogos) + "\n"
@@ -46,7 +46,7 @@ class Usuario:
     def __repr__(self):
         """Retorna uma mensagem técnica para o desenvolvedor com fins de depuração"""
 
-        return f"Usuario(nome={self.nome!r}, colecoes={self.colecoes!r}, id={self.id!r})"
+        return f"Usuario(nome={self._nome!r}, colecoes={self._colecoes!r}, id={self._id!r})"
 
 
     def adicionar_colecao(self, colecao: Colecao) -> None:
@@ -60,20 +60,20 @@ class Usuario:
         """
 
         # Invoca o método __eq__ de Colecao implicitamente para verificar a pertinência com base nos critérios estabelecidos
-        if colecao in self.colecoes:
+        if colecao in self._colecoes:
             raise PermissionError("A coleção já está vinculada ao usuário")
         else:
-            self.colecoes.append(colecao)
+            self._colecoes.append(colecao)
 
 
     def listar_colecoes(self) -> str:
         """Retorna uma string vertical enxuta com o nome de todas as coleções do usuário por ordem de inserção"""
 
-        nome_do_usuario_com_espaco = f" {self.nome} "
+        nome_do_usuario_com_espaco = f" {self._nome} "
         mensagem = f"{nome_do_usuario_com_espaco:=^48}\n"
 
-        for colecao in self.colecoes:
-            mensagem += f"{colecao.nome:^48}\n"
+        for colecao in self._colecoes:
+            mensagem += f"{colecao._nome:^48}\n"
 
         return mensagem
 
@@ -88,9 +88,9 @@ class Usuario:
             ValueError: caso o ID informado não corresponda a nenhuma coleção
         """
 
-        for colecao in self.colecoes:
-            if colecao.id == id_da_colecao:
-                self.colecoes.remove(colecao)
+        for colecao in self._colecoes:
+            if colecao._id == id_da_colecao:
+                self._colecoes.remove(colecao)
                 return
 
         raise ValueError("ID da coleção não encontrado")
@@ -99,15 +99,15 @@ class Usuario:
     # Serialização para compatibilidade com JSON
     def to_dict(self):
         return {
-            "nome": self.nome,
-            "id_colecoes": [colecao.id for colecao in self.colecoes], # Não pode armazenar objetos Colecao em JSON, por isso armazena os IDs
-            "id": self.id
+            "nome": self._nome,
+            "id_colecoes": [colecao._id for colecao in self._colecoes], # Não pode armazenar objetos Colecao em JSON, por isso armazena os IDs
+            "id": self._id
         }
 
     # Desserialização a partir dos dados do JSON
     @classmethod
     def from_dict(cls, dados):
         usuario = Usuario(dados["nome"], [servico_colecao.get_by_id(id) for id in dados["id_colecoes"]]) # Instancia um usuário pelos parâmetros: (1) Nome; (2) Lista de coleções obtidas pelo ID
-        usuario.id = dados["id"]
+        usuario._id = dados["id"]
 
         return usuario

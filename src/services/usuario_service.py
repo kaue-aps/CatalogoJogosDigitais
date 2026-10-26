@@ -31,7 +31,7 @@ def cadastrar_usuario(usuario: Usuario):
         # Faz a comparação com base nos parâmetros do método __eq__ definido na classe de domínio
         if usuario == Usuario.from_dict(usuario_cadastrado):
             raise PermissionError("O usuário informado já está cadastrado no sistema")
-    usuario.id = proximo_id_usuario()
+    usuario._id = proximo_id_usuario()
     dados["usuario"].append(usuario.to_dict())
     catalogo.salvar(dados)
 
