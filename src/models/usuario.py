@@ -4,14 +4,14 @@ from src.models.colecao import Colecao
 import src.services.colecao_service as servico_colecao
 
 class Usuario:
-    """Representa um usuário do catálogo que pode possuir e administrar suas coleções de jogos
+    """Representa o usuário principal do catálogo que pode possuir e administrar suas coleções de jogos
 
     Attributes:
         nome (str): Nome ou nickname do usuário (case-sensitive)
-        colecoes (dict[str, Colecao]): Dicionário de coleções do usuário com o par chave-valor sendo 'nome da coleção - objeto'
+        colecoes (list[Colecao]): Lista de objetos coleção do usuário
     """
 
-    def __init__(self, nome: str, colecoes: list[Colecao] = {}):
+    def __init__(self, nome: str, colecoes: list[Colecao] = []):
         if nome == "":
             raise ValueError("O nome do usuário não pode ser vazio.")
         else:
@@ -20,25 +20,6 @@ class Usuario:
         self.colecoes = colecoes
         self.id = None
 
-    def __eq__(self, outro_usuario: Usuario) -> bool:
-        """Verifica se dois usuários possuem o mesmo nome e as mesmas coleções e se, portanto, são iguais"""
-
-        # Compara com base no nome do usuario e sem considerar a ordem das colecoes
-        if self.nome == outro_usuario.nome:
-            for colecao in self.colecoes:
-                if colecao not in outro_usuario.colecoes:
-                    return False
-            return True
-        else:
-            return False
-
-    def __gt__(self, outro_usuario: Usuario) -> bool:
-        """Verifica se um usuário é 'maior' do que outro com base no número de coleções"""
-
-        if len(self.colecoes) > len(outro_usuario.colecoes):
-            return True
-        else:
-            return False
 
     def __str__(self):
         """Retorna um resumo amigável do usuário e de suas coleções"""
@@ -61,25 +42,24 @@ class Usuario:
 
         return mensagem_final
 
+
     def __repr__(self):
         """Retorna uma mensagem técnica para o desenvolvedor com fins de depuração"""
 
         return f"Usuario(nome={self.nome!r}, colecoes={self.colecoes!r}, id={self.id!r})"
 
-    def adicionar_colecao(self, colecao: Colecao):
+
+    def adicionar_colecao(self, colecao: Colecao) -> None:
         """Adiciona um objeto Colecao à lista de coleções.
 
         Args:
-            colecao (Colecao): objeto do tipo Colecao
+            colecao (Colecao): objeto Colecao
 
         Raises:
-            ValueError: caso nome_colecao seja vazio
-            PermissionError: ao tentar adicionar uma coleção que já consta no dicionário
-
-        Returns:
-            Colecao: objeto instanciado
+            PermissionError: ao tentar adicionar uma coleção que já consta na lista
         """
 
+        # Invoca o método __eq__ de Colecao implicitamente para verificar a pertinência com base nos critérios estabelecidos
         if colecao in self.colecoes:
             raise PermissionError("A coleção já está vinculada ao usuário")
         else:
@@ -87,7 +67,7 @@ class Usuario:
 
 
     def listar_colecoes(self) -> str:
-        """Retorna uma string enxuta com o nome de todas as coleções do usuário por ordem de inserção"""
+        """Retorna uma string vertical enxuta com o nome de todas as coleções do usuário por ordem de inserção"""
 
         nome_do_usuario_com_espaco = f" {self.nome} "
         mensagem = f"{nome_do_usuario_com_espaco:=^48}\n"
@@ -99,14 +79,14 @@ class Usuario:
 
 
     def remover_colecao(self, id_da_colecao: int) -> None:
-        """Exclui uma coleção do usuário
+        """Exclui uma coleção da lista do usuário com base no ID
 
         Args:
             id_da_colecao (int): identificador único da coleção
         
         Raises:
-            ValueError: caso o nome da coleção seja inválido (vazio)
-            KeyError: caso o nome da coleção não conste no dicionário"""
+            ValueError: caso o ID informado não corresponda a nenhuma coleção
+        """
 
         for colecao in self.colecoes:
             if colecao.id == id_da_colecao:
@@ -116,16 +96,18 @@ class Usuario:
         raise ValueError("ID da coleção não encontrado")
 
 
+    # Serialização para compatibilidade com JSON
     def to_dict(self):
         return {
             "nome": self.nome,
-            "id_colecoes": [colecao.id for colecao in self.colecoes],
-            "id": self.colecoes
+            "id_colecoes": [colecao.id for colecao in self.colecoes], # Não pode armazenar objetos Colecao em JSON, por isso armazena os IDs
+            "id": self.id
         }
 
+    # Desserialização a partir dos dados do JSON
     @classmethod
     def from_dict(cls, dados):
-        usuario = Usuario(dados["nome"], [servico_colecao.get_by_id(id) for id in dados["id_colecoes"]])
+        usuario = Usuario(dados["nome"], [servico_colecao.get_by_id(id) for id in dados["id_colecoes"]]) # Instancia um usuário pelos parâmetros: (1) Nome; (2) Lista de coleções obtidas pelo ID
         usuario.id = dados["id"]
 
         return usuario
