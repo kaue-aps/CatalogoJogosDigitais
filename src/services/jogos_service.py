@@ -10,6 +10,7 @@ Responsabilidades:
 """
 
 from src.repositories.persistencia import CatalogoJSON
+from src.services.configuracao_service import limite_jogos_andamento_atingido
 from src.models.jogo import Jogo
 from src.models.categorias import *
 
@@ -146,6 +147,26 @@ def atualizar_jogo(id: int, dados_atualizados: dict) -> None:
                 
     raise ValueError("ID do jogo não encontrado.")
 
+def registrar_progresso(id: int, horas: float) -> None:
+    """Adiciona horas de gameplay a um jogo, podendo alterar seu status e sua data de início.
+    
+    Raises:
+        PermissionError: caso o limite de jogos em andamento já tenha sido atingido no catálogo
+    """
+
+    jogo_cadastrado = get_by_id(id)
+
+    # Regra de Negócio: não podemos exceder o limite de jogos com status "JOGANDO"
+    if jogo_cadastrado._status != "JOGANDO":
+        if limite_jogos_andamento_atingido():
+            return PermissionError("De acordo com as configurações do sistema, não são permitidos mais de 3 jogos com status 'JOGANDO'")
+    # Caso o usuário já esteja jogando, prossiga normalmente
+    jogo_cadastrado.registrar_progresso(horas) # Validação embutida no método
+    # Atualiza apenas os atributos que podem ter sido eventualmente mudados
+    atualizar_jogo(id, {"horas_jogadas": jogo_cadastrado.horas_jogadas,
+                        "data_inicio": jogo_cadastrado.data_inicio,
+                        "status": jogo_cadastrado._status})
+    
 
 def avaliar_jogo(id: int, nota: float) -> None:
     """Persiste uma avaliação do jogo de forma validada"""
