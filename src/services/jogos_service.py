@@ -97,24 +97,180 @@ def get_by_id(id: int):
     raise ValueError("ID do jogo não encontrado.")
 
 
-def avaliar_jogo(id: int, nota: float) -> None:
+def atualizar_jogo(id: int, dados_atualizados: dict) -> None:
     dados = catalogo.carregar()
-    for categoria in dados["jogos"].values():
-        for jogo in categoria:
+    
+    for categoria, lista_jogos in dados["jogos"].items():
+        for jogo in lista_jogos:
             if jogo["id"] == id:
-                if categoria == dados["jogos"]["genericos"]:
-                    jogo_objeto = Jogo.from_dict(jogo)
-                elif categoria == dados["jogos"]["campanha"]:
-                    jogo_objeto = JogoCampanha.from_dict(jogo)
-                elif categoria == dados["jogos"]["competitivo"]:
-                    jogo_objeto =  JogoCompetitivo.from_dict(jogo)
-                elif categoria == dados["jogos"]["cooperativo"]:
-                    jogo_objeto = JogoCooperativo.from_dict(jogo)
+                # Impede que o ID seja alterado acidentalmente via update
+                if "id" in dados_atualizados:
+                    del dados_atualizados["id"]
+                    
+                # Atualiza os campos do dicionário existente
+                jogo.update(dados_atualizados)
+                
+                # Valida se as novas chaves/valores não quebram o contrato da classe
+                try:
+                    if categoria == "genericos":
+                        Jogo.from_dict(jogo)
+                    elif categoria == "campanha":
+                        JogoCampanha.from_dict(jogo)
+                    elif categoria == "competitivo":
+                        JogoCompetitivo.from_dict(jogo)
+                    elif categoria == "cooperativo":
+                        JogoCooperativo.from_dict(jogo)
+                except Exception as e:
+                    raise ValueError(f"Os dados fornecidos são inválidos para instanciar o jogo: {e}")
 
-                jogo_objeto.avaliar_jogo(nota) # Validação já embutida no método
-                jogo["avaliacao"] = jogo_objeto.avaliacao
                 catalogo.salvar(dados)
-
+                return
+                
     raise ValueError("ID do jogo não encontrado.")
 
 
+def avaliar_jogo(id: int, nota: float) -> None:
+    jogo_objeto = get_by_id(id)
+    jogo_objeto.avaliar_jogo(nota) # Validação já embutida no método
+    
+    atualizar_jogo(id, {"avaliacao": jogo_objeto.avaliacao}) # Persistência
+
+
+def listar_jogos() -> list:
+    """Retorna todos os jogos do catalogo de forma instanciada em uma lista"""
+    dados = catalogo.carregar()
+    jogos_encontrados = []
+    
+    for categoria, lista_jogos in dados["jogos"].items():
+        for jogo in lista_jogos:
+            if categoria == "genericos":
+                jogos_encontrados.append(Jogo.from_dict(jogo))
+            elif categoria == "campanha":
+                jogos_encontrados.append(JogoCampanha.from_dict(jogo))
+            elif categoria == "competitivo":
+                jogos_encontrados.append(JogoCompetitivo.from_dict(jogo))
+            elif categoria == "cooperativo":
+                jogos_encontrados.append(JogoCooperativo.from_dict(jogo))
+                
+    return jogos_encontrados
+
+
+def listar_por_genero(genero: str) -> list:
+    """Retorna uma lista filtrada de objetos Jogo ou subclasses do gênero correspondente ao informado"""
+
+    dados = catalogo.carregar()
+    jogos_encontrados = []
+    
+    genero_busca = genero.strip().lower() # Busca padronizada em minúsculas sem espaços
+    
+    for categoria, lista_jogos in dados["jogos"].items():
+        for jogo in lista_jogos:
+            if jogo["genero"].strip().lower() == genero_busca: # Instancia e adiciona à lista caso seja do gênero correspondente
+                if categoria == "genericos":
+                    jogos_encontrados.append(Jogo.from_dict(jogo))
+                elif categoria == "campanha":
+                    jogos_encontrados.append(JogoCampanha.from_dict(jogo))
+                elif categoria == "competitivo":
+                    jogos_encontrados.append(JogoCompetitivo.from_dict(jogo))
+                elif categoria == "cooperativo":
+                    jogos_encontrados.append(JogoCooperativo.from_dict(jogo))
+                
+    return jogos_encontrados
+
+
+def listar_por_status(status: str) -> list:
+    """Retorna uma lista filtrada de objetos Jogo ou subclasses com o status correspondente ao informado"""
+
+    dados = catalogo.carregar()
+    jogos_encontrados = []
+    
+    status_busca = status.strip().lower()
+    
+    for categoria, lista_jogos in dados["jogos"].items():
+        for jogo in lista_jogos:
+            if jogo["status"].strip().lower() == status_busca:
+                if categoria == "genericos":
+                    jogos_encontrados.append(Jogo.from_dict(jogo))
+                elif categoria == "campanha":
+                    jogos_encontrados.append(JogoCampanha.from_dict(jogo))
+                elif categoria == "competitivo":
+                    jogos_encontrados.append(JogoCompetitivo.from_dict(jogo))
+                elif categoria == "cooperativo":
+                    jogos_encontrados.append(JogoCooperativo.from_dict(jogo))
+                
+    return jogos_encontrados
+
+
+def listar_por_plataforma(plataforma: str) -> list:
+    """Retorna uma lista filtrada de objetos Jogo ou subclasses com a plataforma correspondente à informada"""
+
+    dados = catalogo.carregar()
+    jogos_encontrados = []
+    
+    plataforma_busca = plataforma.strip().lower()
+    
+    for categoria, lista_jogos in dados["jogos"].items():
+        for jogo in lista_jogos:
+            if jogo["plataforma"].strip().lower() == plataforma_busca:
+                if categoria == "genericos":
+                    jogos_encontrados.append(Jogo.from_dict(jogo))
+                elif categoria == "campanha":
+                    jogos_encontrados.append(JogoCampanha.from_dict(jogo))
+                elif categoria == "competitivo":
+                    jogos_encontrados.append(JogoCompetitivo.from_dict(jogo))
+                elif categoria == "cooperativo":
+                    jogos_encontrados.append(JogoCooperativo.from_dict(jogo))
+                
+    return jogos_encontrados
+
+
+def buscar_por_titulo(termo: str) -> list:
+    """Retorna uma lista de jogos com o termo informado inserido no título (busca parcial)"""
+
+    dados = catalogo.carregar()
+    jogos_encontrados = []
+    termo_busca = termo.strip().lower()
+    
+    # Retorna lista vazia se a busca for apenas espaços em branco
+    if not termo_busca:
+        return jogos_encontrados
+
+    for categoria, lista_jogos in dados["jogos"].items():
+        for jogo in lista_jogos:
+            titulo_jogo = jogo["titulo"].strip().lower()
+            
+            # Verifica se o termo pesquisado está contido no título
+            if termo_busca in titulo_jogo:
+                if categoria == "genericos":
+                    jogos_encontrados.append(Jogo.from_dict(jogo))
+                elif categoria == "campanha":
+                    jogos_encontrados.append(JogoCampanha.from_dict(jogo))
+                elif categoria == "competitivo":
+                    jogos_encontrados.append(JogoCompetitivo.from_dict(jogo))
+                elif categoria == "cooperativo":
+                    jogos_encontrados.append(JogoCooperativo.from_dict(jogo))
+                
+    return jogos_encontrados
+
+
+def ordenar_jogos_por_avaliacao(reverse: bool = True) -> list:
+    """Retorna a lista ordenada dos jogos mais bem avaliados por padrão
+    
+    Args:
+        reverse (bool): piores avaliações primeiro (False) ou mais bem avaliados primeiro (True)
+    """
+    jogos = listar_jogos()
+    # Pega o atributo 'avaliacao' de cada objeto.
+    # Usa getattr com default 0.0 caso a avaliação ainda não tenha sido feita
+    return sorted(jogos, key=lambda jogo: getattr(jogo, "avaliacao", 0.0), reverse=reverse)
+
+
+def ordenar_jogos_por_horas_jogadas(reverse: bool = True) -> list:
+    """Retorna a lista ordenada dos jogos mais jogados por padrão
+    
+    Args:
+        reverse (bool): menos jogados primeiro (False) ou mais jogados primeiro (True)
+    """
+
+    jogos = listar_jogos()
+    return sorted(jogos, key=lambda jogo: getattr(jogo, "horas_jogadas"), reverse=reverse)
