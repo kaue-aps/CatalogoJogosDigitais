@@ -6,6 +6,7 @@ Contém funções específicas para jogos genéricos ou de categoria
 Responsabilidades:
 - Orquestrar o CRUD básico de jogos
 - Garantir regras de negócio ao manipular esses jogos
+- Filtrar e ordenar buscas de jogos
 """
 
 from src.repositories.persistencia import CatalogoJSON
@@ -15,7 +16,9 @@ from src.models.categorias import *
 catalogo = CatalogoJSON("data/catalogo.json")
 
 
-def proximo_id_jogos():
+def proximo_id_jogos() -> int:
+    """Retorna o próximo do id do jogo a ser cadastrado com base no maior id existente na base de dados"""
+
     dados = catalogo.carregar()
     maior = 0 # Começa em 0 para que o retorno mínimo (maior + 1) seja 1
 
@@ -29,7 +32,9 @@ def proximo_id_jogos():
     return maior + 1
 
 
-def cadastrar_jogo(jogo: Jogo | JogoCampanha | JogoCompetitivo | JogoCooperativo):
+def cadastrar_jogo(jogo: Jogo | JogoCampanha | JogoCompetitivo | JogoCooperativo) -> None:
+    """Persiste um jogo na base de dados, agindo polimorficamente dependendo da categoria informada"""
+
     dados = catalogo.carregar()
 
     if isinstance(jogo, Jogo):
@@ -69,7 +74,9 @@ def cadastrar_jogo(jogo: Jogo | JogoCampanha | JogoCompetitivo | JogoCooperativo
         raise TypeError("Tipo de jogo informado inválido")
 
 
-def deletar_jogo(id: int):
+def deletar_jogo(id: int) -> None:
+    """Exclui um jogo da base de dados conforme id especificado"""
+
     dados = catalogo.carregar()
     for categoria in dados["jogos"].values():
         for jogo in categoria:
@@ -80,7 +87,9 @@ def deletar_jogo(id: int):
     raise ValueError("ID do jogo não encontrado.")
 
 
-def get_by_id(id: int):
+def get_by_id(id: int) -> Jogo | JogoCampanha | JogoCompetitivo | JogoCooperativo:
+    """Retorna o jogo instanciado com id correspondente na base de dados"""
+
     dados = catalogo.carregar()
     for categoria in dados["jogos"].values():
         for jogo in categoria: # Percorre a lista de jogos da categoria
@@ -98,6 +107,15 @@ def get_by_id(id: int):
 
 
 def atualizar_jogo(id: int, dados_atualizados: dict) -> None:
+    """Atualiza o estado de um jogo na base de dados JSON.
+    
+    Somente os dados modificados precisam ser passados como parâmetro.
+
+    Args:
+        id (int): id do jogo
+        dados_atualizados (dict): chaves (atributos) e valores a serem modificados. Ex: {"avaliacao": x, "status": y}
+    """
+
     dados = catalogo.carregar()
     
     for categoria, lista_jogos in dados["jogos"].items():
@@ -130,6 +148,8 @@ def atualizar_jogo(id: int, dados_atualizados: dict) -> None:
 
 
 def avaliar_jogo(id: int, nota: float) -> None:
+    """Persiste uma avaliação do jogo de forma validada"""
+
     jogo_objeto = get_by_id(id)
     jogo_objeto.avaliar_jogo(nota) # Validação já embutida no método
     
