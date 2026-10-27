@@ -46,3 +46,26 @@ def redefinir_limite_jogos_andamento(novo_limite: int) -> None:
         config = configuracoes.carregar()
         config["limite_jogos_andamento"] = novo_limite
         configuracoes.salvar(config)
+
+def get_limite_jogos_andamento() -> int:
+    """Retorna o limite atual de jogos com status 'JOGANDO'"""
+
+    config = configuracoes.carregar()
+    return config["limite_jogos_andamento"]
+
+def limite_jogos_andamento_atingido() -> bool:
+    """Retorna True se o número de jogos cadastrados com status 'JOGANDO' for igual ao limite estabelecido"""
+
+    dados = catalogo.carregar()
+    em_andamento = 0
+
+    for lista in dados["jogos"].values:
+        for jogo in lista:
+            if jogo["status"] == "JOGANDO":
+                em_andamento += 1
+
+    if em_andamento == get_limite_jogos_andamento:
+        return True
+    else:
+        return False
+
