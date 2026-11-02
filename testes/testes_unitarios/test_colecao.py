@@ -20,3 +20,10 @@ def test_erro_ao_adicionar_mesmo_jogo_na_colecao(colecao_cheia):
     
     with pytest.raises(PermissionError):
         colecao_cheia.adicionar_jogo(r2)
+
+def test_relacao_entre_colecoes(colecao_cheia):
+    e1 = Jogo("Elden Ring", "Mistério", "PC")
+    c2 = Colecao("Games Não Favoritos", [e1])
+
+    assert colecao_cheia > c2
+    assert colecao_cheia != c2

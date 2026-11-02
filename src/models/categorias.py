@@ -46,10 +46,14 @@ class JogoCampanha(Jogo):
 
         Args:
             capitulos (int, optional): Número de capítulos a serem avançados. Padrão é 1.
+        Raises:
+            ValueError: Caso os capítulos não sejam positivos
         """
 
+        if capitulos <= 0:
+            raise ValueError("Capítulos negativos ou nulos não são permitidos")
         # Registra o avanço de capítulos caso ele não exceda a quantidade de capítulos totais
-        if (self._capitulos_concluidos + capitulos) <= self._capitulos_totais:
+        elif (self._capitulos_concluidos + capitulos) <= self._capitulos_totais:
             self._capitulos_concluidos += capitulos
         # Caso o avanço ultrapasse o limite, ele apenas conclui o jogo inteiro
         else:
