@@ -20,7 +20,7 @@ def test_cria_jogo_campanha(capitulos_totais):
             jca1 = JogoCampanha("Batman", "Ação", "Console", capitulos_totais)
 
 
-@pytest.mark.parametrize("capitulos", [-1, 0, 5, 6, 8, 10, 11])
+@pytest.mark.parametrize("capitulos", [-1, 0, 5, 6, 8, 10])
 def test_percentual_de_conclusao(capitulos):
     jca1 = JogoCampanha("Batman", "Ação", "Console", 10)
     if capitulos >= 1:

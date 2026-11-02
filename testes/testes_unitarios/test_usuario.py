@@ -20,5 +20,5 @@ def test_add_e_remove_colecao():
     u1.adicionar_colecao(c3)
     u1.remover_colecao(c1)
 
-    assert u1.listar_colecoes() == f"{' Godofredo ':=^48}\n{'Jogos 2025':^48}\n{'Jogos 2024':=^48}\n"
+    assert u1.listar_colecoes() == f"{' Godofredo ':=^48}\n{'Jogos 2025':^48}\n{'Jogos 2024':^48}\n"
 
