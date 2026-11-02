@@ -36,6 +36,21 @@ class Jogo:
 
 
     @property
+    def id(self) -> int | None:
+        return self._id
+
+
+    @id.setter
+    def id(self, novo_id: int) -> None:
+        self._id = novo_id
+
+
+    @property
+    def status(self) -> str:
+        return self._status
+
+
+    @property
     def titulo(self) -> str:
         return self._titulo
 
@@ -152,7 +167,10 @@ class Jogo:
     def __eq__(self, outro_jogo: Jogo) -> bool:
         """Verifica se um jogo é igual a outro com base no título e na plataforma de ambos"""
 
-        if self._titulo == outro_jogo._titulo and self._plataforma == outro_jogo._plataforma:
+        if (
+            self._titulo.casefold() == outro_jogo._titulo.casefold()
+            and self._plataforma.casefold() == outro_jogo._plataforma.casefold()
+        ):
             return True
         else:
             return False

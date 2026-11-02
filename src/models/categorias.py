@@ -71,14 +71,18 @@ class JogoCampanha(Jogo):
     # Desserialização a partir dos dados do JSON
     @classmethod
     def from_dict(cls, dados):
-        jogo_campanha = JogoCampanha(dados["titulo"], dados["genero"], dados["plataforma"])
+        jogo_campanha = JogoCampanha(
+            dados["titulo"],
+            dados["genero"],
+            dados["plataforma"],
+            dados["capitulos_totais"]
+        )
         jogo_campanha._status = dados["status"]
         jogo_campanha._horas_jogadas = dados["horas_jogadas"]
         jogo_campanha._avaliacao = dados["avaliacao"]
         jogo_campanha._data_inicio = dados["data_inicio"]
         jogo_campanha._data_termino = dados["data_termino"]
         jogo_campanha._id = dados["id"]
-        jogo_campanha._capitulos_totais = dados["capitulos_totais"]
         jogo_campanha._capitulos_concluidos = dados["capitulos_concluidos"]
 
         return jogo_campanha

@@ -78,22 +78,13 @@ class Usuario:
         return mensagem
 
 
-    def remover_colecao(self, id_da_colecao: int) -> None:
-        """Exclui uma coleção da lista do usuário com base no ID
+    def remover_colecao(self, colecao: Colecao) -> None:
+        """Exclui uma coleção da lista do usuário"""
 
-        Args:
-            id_da_colecao (int): identificador único da coleção
-        
-        Raises:
-            ValueError: caso o ID informado não corresponda a nenhuma coleção
-        """
-
-        for colecao in self._colecoes:
-            if colecao._id == id_da_colecao:
-                self._colecoes.remove(colecao)
+        for colec in self._colecoes:
+            if colec == colecao:
+                self._colecoes.remove(colec)
                 return
-
-        raise ValueError("ID da coleção não encontrado")
 
 
     # Serialização para compatibilidade com JSON
