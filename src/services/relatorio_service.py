@@ -10,7 +10,8 @@ from src.repositories.persistencia import CatalogoJSON
 from src.models.jogo import Jogo
 from src.models.categorias import JogoCampanha, JogoCompetitivo, JogoCooperativo
 
-catalogo = CatalogoJSON("data/catalogo.json")
+caminho = "data/catalogo.json"
+catalogo = CatalogoJSON(caminho)
 
 def total_de_jogos_cadastrados() -> int:
     dados = catalogo.carregar()

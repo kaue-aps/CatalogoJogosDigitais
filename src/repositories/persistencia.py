@@ -9,8 +9,10 @@ Obs: As regras de negócio serão verificadas no âmbito dos módulos contidos e
 import json
 from pathlib import Path
 
+caminho_padrao = "data/catalogo.json"
+
 class CatalogoJSON:
-    def __init__(self, caminho: str):
+    def __init__(self, caminho: str = caminho_padrao):
         self.caminho = Path(caminho)
 
 

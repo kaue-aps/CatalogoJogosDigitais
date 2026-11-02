@@ -10,7 +10,8 @@ from src.repositories.persistencia import CatalogoJSON
 from src.models.colecao import Colecao
 import src.services.jogos_service as servico_jogo
 
-catalogo = CatalogoJSON("data/catalogo.json")
+caminho = "data/catalogo.json"
+catalogo = CatalogoJSON(caminho)
 
 def proximo_id_colecao():
     dados = catalogo.carregar()

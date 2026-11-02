@@ -10,7 +10,8 @@ from src.repositories.persistencia import CatalogoJSON
 from src.models.usuario import Usuario
 from src.services.colecao_service import get_by_id
 
-catalogo = CatalogoJSON("data/catalogo.json")
+caminho = "data/catalogo.json"
+catalogo = CatalogoJSON(caminho)
 
 def proximo_id_usuario() -> int:
     """Retorna um ID único para o próximo usuário. É calculado com base no maior ID de usuário existente"""

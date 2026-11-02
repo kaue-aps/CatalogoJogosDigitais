@@ -7,8 +7,10 @@ Módulo de persistência de configurações em JSON
 import json
 from pathlib import Path
 
+caminho_padrao = "data/settings.json"
+
 class ConfiguracaoJSON:
-    def __init__(self, caminho: str):
+    def __init__(self, caminho: str = caminho_padrao):
         self.caminho = Path(caminho)
 
     def carregar(self):

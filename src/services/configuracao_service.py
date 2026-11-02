@@ -9,8 +9,11 @@ Responsabilidades:
 from src.repositories.config import ConfiguracaoJSON
 from src.repositories.persistencia import CatalogoJSON
 
-configuracoes = ConfiguracaoJSON("data/settings.json")
-catalogo = CatalogoJSON("data/catalogo.json")
+caminho = "data/catalogo.json"
+caminho_config = "data/settings.json"
+
+configuracoes = ConfiguracaoJSON(caminho_config)
+catalogo = CatalogoJSON(caminho)
 
 
 def verificar_meta_anual_finalizados() -> bool:
@@ -87,8 +90,8 @@ def limite_jogos_andamento_atingido() -> bool:
     dados = catalogo.carregar()
     em_andamento = 0
 
-    for lista in dados["jogos"].values:
-        for jogo in lista:
+    for categoria in dados["jogos"].values():
+        for jogo in categoria:
             if jogo["status"] == "JOGANDO":
                 em_andamento += 1
 

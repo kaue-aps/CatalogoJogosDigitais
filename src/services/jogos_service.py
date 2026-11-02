@@ -14,7 +14,8 @@ from src.services.configuracao_service import limite_jogos_andamento_atingido
 from src.models.jogo import Jogo
 from src.models.categorias import *
 
-catalogo = CatalogoJSON("data/catalogo.json")
+caminho = "data/catalogo.json"
+catalogo = CatalogoJSON(caminho)
 
 
 def proximo_id_jogos() -> int:
@@ -38,16 +39,7 @@ def cadastrar_jogo(jogo: Jogo | JogoCampanha | JogoCompetitivo | JogoCooperativo
 
     dados = catalogo.carregar()
 
-    if isinstance(jogo, Jogo):
-        for jogo_cadastrado in dados["jogos"]["genericos"]:
-            # Faz a comparação com base nos parâmetros do método __eq__ definido na classe de domínio
-            if jogo == Jogo.from_dict(jogo_cadastrado):
-                raise PermissionError("O jogo informado já está cadastrado na base de dados")
-        jogo.id = proximo_id_jogos()
-        dados["jogos"]["genericos"].append(jogo.to_dict())
-        catalogo.salvar(dados)
-
-    elif isinstance(jogo, JogoCampanha):
+    if isinstance(jogo, JogoCampanha):
         for jogo_cadastrado in dados["jogos"]["campanha"]:
             if jogo == JogoCampanha.from_dict(jogo_cadastrado):
                 raise PermissionError("O jogo informado já está cadastrado na base de dados")
@@ -69,6 +61,15 @@ def cadastrar_jogo(jogo: Jogo | JogoCampanha | JogoCompetitivo | JogoCooperativo
                 raise PermissionError("O jogo informado já está cadastrado na base de dados")
         jogo.id = proximo_id_jogos()
         dados["jogos"]["cooperativo"].append(jogo.to_dict())
+        catalogo.salvar(dados)
+
+    elif isinstance(jogo, Jogo):
+        for jogo_cadastrado in dados["jogos"]["genericos"]:
+            # Faz a comparação com base nos parâmetros do método __eq__ definido na classe de domínio
+            if jogo == Jogo.from_dict(jogo_cadastrado):
+                raise PermissionError("O jogo informado já está cadastrado na base de dados")
+        jogo.id = proximo_id_jogos()
+        dados["jogos"]["genericos"].append(jogo.to_dict())
         catalogo.salvar(dados)
 
     else:
@@ -159,13 +160,21 @@ def registrar_progresso(id: int, horas: float) -> None:
     # Regra de Negócio: não podemos exceder o limite de jogos com status "JOGANDO"
     if jogo_cadastrado._status != "JOGANDO":
         if limite_jogos_andamento_atingido():
-            return PermissionError("De acordo com as configurações do sistema, não são permitidos mais de 3 jogos com status 'JOGANDO'")
+            raise PermissionError("De acordo com as configurações do sistema, não são permitidos mais de 3 jogos com status 'JOGANDO'")
     # Caso o usuário já esteja jogando, prossiga normalmente
     jogo_cadastrado.registrar_progresso(horas) # Validação embutida no método
     # Atualiza apenas os atributos que podem ter sido eventualmente mudados
     atualizar_jogo(id, {"horas_jogadas": jogo_cadastrado.horas_jogadas,
                         "data_inicio": jogo_cadastrado.data_inicio,
                         "status": jogo_cadastrado._status})
+
+def finalizar_jogo(id: int):
+    """Finaliza um jogo com no mínimo 1 hora de gameplay"""
+
+    jogo_cadastrado = get_by_id(id)
+    jogo_cadastrado.finalizar_jogo() # Validação embutida no método
+
+    atualizar_jogo(id, {"status": jogo_cadastrado._status, "data_termino": jogo_cadastrado.data_termino}) # Persistência
     
 
 def avaliar_jogo(id: int, nota: float) -> None:
