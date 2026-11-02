@@ -13,10 +13,12 @@ import src.services.jogos_service as servico_jogos
 import src.services.colecao_service as servico_colecoes
 import src.services.relatorio_service as servico_relatorios
 import src.services.configuracao_service as servico_configuracoes
+import src.services.usuario_service as servico_usuarios
 
 from src.models.jogo import Jogo
 from src.models.categorias import *
 from src.models.colecao import Colecao
+from src.models.usuario import Usuario
 
 
 def criar_parser():
@@ -36,6 +38,7 @@ def criar_parser():
     p_cadastrar.add_argument("--titulo", required=True, type=str, help="Título do jogo")
     p_cadastrar.add_argument("--genero", required=True, type=str, help="Gênero do jogo")
     p_cadastrar.add_argument("--plataforma", required=True, type=str, help="Plataforma (PC, Console, Mobile)")
+
     p_cadastrar.add_argument(
         "--tipo", 
         choices=["generico", "campanha", "competitivo", "cooperativo"], 
@@ -64,12 +67,6 @@ def criar_parser():
     p_ordenar.add_argument("--por", choices=["avaliacao", "horas"], required=True, help="Atributo para ordenação")
     p_ordenar.add_argument("--crescente", action="store_true", help="Se informado, ordena de forma crescente (padrão: decrescente)")
 
-    # AINDA VOU VER ISSO AQUI
-    # --- jogos atualizar ---
-    # p_atualizar = subparsers_jogos.add_parser("atualizar", help="Atualiza informações de um jogo existente")
-    # p_atualizar.add_argument("--horas", type=float, help="Horas jogadas a adicionar ou definir")
-    # p_atualizar.add_argument("--status", type=str, help="Novo status do jogo")
-
     # --- jogos avaliar ---
     p_avaliar = subparsers_jogos.add_parser("avaliar", help="Atribui uma nota ao jogo depois de finalizado")
     p_avaliar.add_argument("--id", required=True, type=int, help="ID do jogo")
@@ -90,7 +87,7 @@ def criar_parser():
     p_col_criar.add_argument("--nome", required=True, type=str, help="Nome da coleção (ex: Favoritos)")
 
     # --- colecoes listar ---
-    p_col_listar = subparsers_colecoes.add_parser("listar", help="Listar todas as coleções do usuário")
+    p_col_listar = subparsers_colecoes.add_parser("listar", help="Listar todas as coleções do sistema")
 
     # --- colecoes ver ---
     p_col_ver = subparsers_colecoes.add_parser("ver", help="Exibe os jogos dentro de uma coleção específica")
@@ -137,6 +134,44 @@ def criar_parser():
     p_cfg_up.add_argument("--plataforma-principal", choices=["PC", "Console", "Mobile"], type=str, help="Definir plataforma principal")
     p_cfg_up.add_argument("--limite-andamento", type=int, help="Novo limite de jogos em andamento (com status 'JOGANDO')")
     p_cfg_up.add_argument("--generos-favoritos", nargs="+", type=str, help="Definir até 3 gêneros favoritos (separados por espaços)")
+
+
+    # =========================================================================
+    # 5. MÓDULO: USUÁRIOS (python main.py usuarios ...)
+    # =========================================================================
+
+    parser_usuarios = subparsers_principais.add_parser("usuarios", help="Gerenciamento de usuários do sistema")
+    subparsers_usuarios = parser_usuarios.add_subparsers(dest="acao", help="Ação de configuração")
+
+    # --- usuarios cadastrar ---
+    p_user_cadastrar = subparsers_usuarios.add_parser("cadastrar", help="Cadastra um novo usuário no sistema")
+    p_user_cadastrar.add_argument("--nome", required=True, type="str", help="Nome ou nickname do usuário")
+
+    # --- usuarios deletar ---
+    p_user_deletar = subparsers_usuarios.add_parser("deletar", help="Exclui um usuário existente do sistema")
+    p_user_deletar.add_argument("--id", required=True, type="int", help="ID do usuário cadastrado")
+
+    # --- usuarios adicionar-colecao ---
+    p_user_add = subparsers_usuarios.add_parser("adicionar-colecao", help="Adiciona uma coleção existente à lista de coleções do usuário")
+    p_user_add.add_argument("--id-colecao", required=True, type="int", help="ID da coleção")
+    p_user_add.add_argument("--id-usuario", required=True, type="int", help="ID do usuario")
+
+    # --- usuarios remover-colecao ---
+    p_user_remove = subparsers_usuarios.add_parser("remover-colecao", help="Remove uma coleção existente da lista de coleções do usuário")
+    p_user_remove.add_argument("--id-colecao", required=True, type="int", help="ID da coleção")
+    p_user_remove.add_argument("--id-usuario", required=True, type="int", help="ID do usuario")
+
+    # --- usuarios listar ---
+    subparsers_usuarios.add_parser("listar", help="Lista todos os usuários do sistema")
+
+    # --- usuarios listar-colecoes ---
+    p_user_col = subparsers_usuarios.add_parser("listar-colecoes", help="Lista todas as coleções do usuário informado")
+    p_user_col.add_argument("--id", required=True, type=int, help="ID do usuário")
+
+    # --- usuarios resumo ---
+    p_user_see = subparsers_usuarios.add_parser("resumo", help="Exibe a quantidade de coleções e de jogos do usuário")
+    p_user_see.add_argument("--id", required=True, type="int", help="ID do usuário")
+
 
     return parser
 
@@ -201,15 +236,6 @@ def main():
 
             for j in res:
                 print(j)
-
-        # elif args.acao == "atualizar":
-        #     dados = {}
-        #     if args.horas is not None:
-        #         dados["horas_jogadas"] = args.horas
-        #     if args.status:
-        #         dados["status"] = args.status
-        #     servico_jogos.atualizar_jogo(args.id, dados)
-        #     print(f"Jogo {args.id} atualizado com sucesso!")
 
         elif args.acao == "avaliar":
             try:
@@ -287,8 +313,7 @@ def main():
     # === MÓDULO CONFIGURAÇÕES ===
     elif args.modulo == "config":
         if args.acao == "exibir":
-            # servico_configuracoes.exibir()
-            pass
+            print(servico_configuracoes.configuracoes_atuais())
         elif args.acao == "redefinir":
             if args.meta_anual:
                 try:
@@ -317,6 +342,53 @@ def main():
                     print(f"Gêneros favoritos redefinidos com sucesso!")
                 except Exception as e:
                     print(f"Erro ao redefinir gêneros favoritos: {e}")
+
+    # === MÓDULO USUÁRIOS ===
+    elif args.modulo == "usuarios":
+
+        if args.acao == "cadastrar":
+            usuario = Usuario(args.nome)
+            try:
+                servico_usuarios.cadastrar_usuario(usuario)
+                print(f"Usuário cadastrado com sucesso!")
+            except Exception as e:
+                print(f"Erro ao cadastrar usuário: {e}")
+
+        elif args.acao == "deletar":
+            try:
+                servico_usuarios.deletar_usuario(args.id)
+                print("Usuário deletado com sucesso!")
+            except Exception as e:
+                print(f"Erro ao deletar usuário: {e}")
+
+        elif args.acao == "adicionar-colecao":
+            try:
+                servico_usuarios.adicionar_colecao_ao_usuario(args.id_colecao, args.id_usuario)
+                print(f"Coleção adicionada à lista do usuário com sucesso!")
+            except Exception as e:
+                print(f"Erro ao adicionar coleção à lista do usuário: {e}")
+
+        elif args.acao == "remover-colecao":
+            try:
+                servico_usuarios.remover_colecao_do_usuario(args.id_colecao, args.id_usuario)
+                print(f"Coleção removida da lista do usuário com sucesso!")
+            except Exception as e:
+                print(f"Erro ao remover coleção da lista do usuário: {e}")
+
+        elif args.acao == "listar":
+            print(servico_usuarios.listar_usuarios())
+
+        elif args.acao == "listar-colecoes":
+            try:
+                print(servico_usuarios.listar_colecoes(args.id_usuario))
+            except Exception as e:
+                print(f"Erro ao listar coleções do usuário: {e}")
+
+        elif args.acao == "resumo":
+            try:
+                print(servico_usuarios.get_by_id(args.id_usuario))
+            except Exception as e:
+                print(f"Erro ao exibir resumo do usuário: {e}")
 
 
 if __name__ == "__main__":

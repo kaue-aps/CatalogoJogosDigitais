@@ -56,16 +56,13 @@ def get_by_id(id: int):
 
 def adicionar_jogo_a_colecao(id_do_jogo: int, id_da_colecao: int):
     dados = catalogo.carregar()
-    jogo = servico_jogo.get_by_id(id_do_jogo)
-    colecao = get_by_id(id_da_colecao)
 
     for colec in dados["colecoes"]:
         if colec["id"] == id_da_colecao:
             if id_do_jogo not in colec["id_jogos"]:
                 colec["id_jogos"].append(id_do_jogo)
                 catalogo.salvar[dados]
-                colecao.adicionar_jogo(jogo)
-                return colecao
+                return
 
 
 def remover_jogo_da_colecao(id_do_jogo: int, id_da_colecao: int):

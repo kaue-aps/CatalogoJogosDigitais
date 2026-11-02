@@ -4,7 +4,7 @@ from src.models.colecao import Colecao
 import src.services.colecao_service as servico_colecao
 
 class Usuario:
-    """Representa o usuário principal do catálogo que pode possuir e administrar suas coleções de jogos
+    """Representa um usuário do catálogo que pode possuir e administrar coleções de jogos
 
     Attributes:
         nome (str): Nome ou nickname do usuário (case-sensitive)

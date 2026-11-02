@@ -2,17 +2,19 @@
 Serviços de Usuario
 
 Responsabilidades:
-- 
-- 
+- Fazer o CRUD básico de usuários do sistema
+- Gerenciar as coleções pertencentes a um usuário
 """
 
 from src.repositories.persistencia import CatalogoJSON
-import src.services.colecao_service as servico_colecao
 from src.models.usuario import Usuario
+from src.services.colecao_service import get_by_id
 
 catalogo = CatalogoJSON("data/catalogo.json")
 
-def proximo_id_usuario():
+def proximo_id_usuario() -> int:
+    """Retorna um ID único para o próximo usuário. É calculado com base no maior ID de usuário existente"""
+
     dados = catalogo.carregar()
     maior = 0 # Começa em 0 para que o retorno mínimo (maior + 1) seja 1
 
@@ -25,7 +27,13 @@ def proximo_id_usuario():
     return maior + 1
 
 
-def cadastrar_usuario(usuario: Usuario):
+def cadastrar_usuario(usuario: Usuario) -> None:
+    """Cadastra um novo usuário no sistema
+    
+    Raises:
+        PermissionError: caso o usuário informado já esteja cadastrado no sistema
+    """
+
     dados = catalogo.carregar()
     for usuario_cadastrado in dados["usuarios"]:
         # Faz a comparação com base nos parâmetros do método __eq__ definido na classe de domínio
@@ -36,7 +44,13 @@ def cadastrar_usuario(usuario: Usuario):
     catalogo.salvar(dados)
 
 
-def deletar_usuario(id: int):
+def deletar_usuario(id: int) -> None:
+    """Exclui o cadastro de um usuário do sistema
+    
+    Raises:
+        ValueError: caso o usuário não seja encontrado pelo ID informado
+    """
+
     dados = catalogo.carregar()
     for usuario in dados["usuarios"]:
         if usuario["id"] == id:
@@ -46,29 +60,69 @@ def deletar_usuario(id: int):
     raise ValueError("ID do usuário não encontrado.")
 
 
+def listar_usuarios() -> str:
+    """Retorna uma string vertical com o nome de todos os usuários cadastrados no sistema"""
+
+    dados = catalogo.carregar()
+    lista = "========== USUARIOS CADASTRADOS ==========\n"
+    for usuario in dados["usuarios"]:
+        lista += f"{usuario["nome"]}\n"
+
+    return lista
+
+
+def listar_colecoes(id_do_usuario) -> str:
+    """Retorna uma string vertical com o nome de todas as coleções do usuário"""
+
+    dados = catalogo.carregar()
+    for usuario in dados["usuarios"]:
+        if usuario["id"] == id_do_usuario:
+            lista = f"========== COLEÇÕES DE {usuario["nome"]} ==========\n"
+            for id_colecao in usuario["id_colecoes"]:
+                lista += f"{get_by_id(id_colecao)._nome}\n"
+            return lista
+        
+    raise ValueError("ID do usuário não encontrado")
+    
+            
 def get_by_id(id: int):
+    """Retorna um usuário instanciado a partir do ID
+    
+    Raises:
+        ValueError: caso o usuário não seja encontrado pelo ID informado 
+    """
+
     dados = catalogo.carregar()
     for usuario in dados["usuarios"]:
         if usuario["id"] == id:
             return Usuario.from_dict(usuario)
     raise ValueError("ID do usuário não encontrado.")
 
+def adicionar_colecao_ao_usuario(id_da_colecao: int, id_do_usuario: int) -> None:
+    """Adiciona uma coleção existente à lista de coleções do usuário
+    
+    Raises:
+        ValueError: caso a coleção ou o usuário não sejam encontrados pelo ID
+    """
 
-def adicionar_colecao_ao_usuario(id_da_colecao: int, id_do_usuario: int):
     dados = catalogo.carregar()
-    colecao = servico_colecao.get_by_id(id_da_colecao)
-    usuario = get_by_id(id_do_usuario)
 
     for user in dados["usuarios"]:
         if user["id"] == id_do_usuario:
             if id_da_colecao not in user["id_colecoes"]:
                 user["id_colecoes"].append(id_da_colecao)
                 catalogo.salvar[dados]
-                usuario.adicionar_colecao(colecao)
-                return usuario
+                return
+    raise ValueError("ID da coleção ou ID do usuário não encontrados")
 
 
-def remover_colecao_do_usuario(id_da_colecao: int, id_do_usuario: int):
+def remover_colecao_do_usuario(id_da_colecao: int, id_do_usuario: int) -> None:
+    """Remove uma coleção existente da lista de coleções do usuário
+    
+    Raises:
+        ValueError: Caso um dos IDs sejam inválidos. Note que os registros podem até existir, mas não significa que estejam associados
+    """
+
     dados = catalogo.carregar()
     for usuario in dados["usuarios"]:
         if usuario["id"] == id_do_usuario:
@@ -76,5 +130,6 @@ def remover_colecao_do_usuario(id_da_colecao: int, id_do_usuario: int):
                 usuario["id_colecoes"].remove(id_da_colecao)
                 catalogo.salvar(dados)
                 return
+    raise ValueError("ID da coleção ou ID do usuário inválidos")
 
             
