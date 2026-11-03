@@ -14,7 +14,7 @@ O **Catálogo de Jogos Digitais** é uma aplicação voltada para o gerenciament
 - **Gestão de Progresso:** Regras de negócio rigorosas para alteração de status, validação de horas jogadas e avaliações.
 - **Coleções Personalizadas:** Organização de jogos em listas customizadas (ex: *Favoritos*, *Zerados 2026*).
 - **Relatórios Estatísticos:** Métricas de tempo total jogado, média de avaliações, top 5 mais jogados e percentuais de status.
-- **Persistência de Dados:** Salvamento em arquivos JSON ou banco SQLite.
+- **Persistência de Dados:** Salvamento em arquivos JSON.
 
 ---
 
@@ -40,51 +40,113 @@ O miniprojeto seguiu uma arquitetura em camadas, isolando as responsabilidades e
 - Classes de domínio (modelos): `src/models/`
 - Ponte para persistência de dados: `src/repositories`
 - Serviços para o ponto de entrada: `src/services`
-- Testes unitários e de integração: `tests/`
+- Testes unitários e de integração: `testes/`
 
 
 ```
 🕹️ CatalogoJogosDigitais/
 │
-├── data/                                 # Arquivos de dados persistidos
-│   ├── catalogo.json                     # Base de dados unificada (usuários, coleções e jogos)
-│   └── settings.json                     # Configurações gerais e métricas predefinidas do sistema
+├── data/                                  # Dados e configurações
+│   ├── catalogo.json                      # Base de dados principal (criada durante a execução do sistema)
+│   └── settings.json                      # Configurações predefinidas do sistema e preferências do usuário
 │
-├── docs/                                 # Documentação técnica do projeto
-│   └── diagrama_classes_uml.md           # Diagrama de classes em Mermaid.js
+├── docs/                                  # Documentação técnica
+│   └── diagrama_classes_uml.md            # Diagrama das classes de domínio em mermaid.js
 │
-├── src/                                  # Código-fonte principal da aplicação
-│   ├── __init__.py                       
+├── src/                                   # Código-fonte da aplicação
+│   ├── models/                            # Entidades do domínio
+│   │   ├── __init__.py
+│   │   ├── categorias.py
+│   │   ├── colecao.py
+│   │   ├── jogo.py
+│   │   └── usuario.py
 │   │
-│   ├── models/                           # Entidades de domínio (classes do sistema)
-│   │   ├── __init__.py                   
-│   │   ├── categorias.py                 # Subclasses JogoCampanha, JogoCooperativo e JogoCompetitivo
-│   │   ├── colecao.py                    # Classe Colecao (agregação de Jogo)
-│   │   ├── jogo.py                       # Classe base Jogo
-│   │   └── usuario.py                    # Classe Usuario (agregação de Colecao)
+│   ├── repositories/                      # Persistência e configuração desacoplados
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── persistencia.py
 │   │
-│   ├── repositories/                     # Camada de desacoplamento e persistência de dados
-│   │   ├── __init__.py                   
-│   │   └── persistencia.py               # Módulo único para gravação e leitura do arquivo JSON
+│   └── services/                          # Regras de negócio e operações
+│       ├── __init__.py
+│       ├── colecao_service.py
+│       ├── configuracao_service.py
+│       ├── jogos_service.py
+│       ├── relatorio_service.py
+│       └── usuario_service.py
+│
+├── testes/                                 # Testes automatizados com pytest
+│   ├── testes_integracao/
+│   │   ├── __init__.py
+│   │   └── test_regras_de_negocio.py
 │   │
-│   └── services/                         # Regras de negócio e casos de uso do sistema
-│       ├── __init__.py                   
-│       ├── categorias_service.py         # Regras para categorias específicas de jogos
-│       ├── colecao_service.py            # Gerenciamento de coleções
-│       ├── jogo_service.py               # Cadastro e manipulação básica de jogos
-│       ├── relatorio_service.py          # Cálculo de estatísticas e métricas do catálogo
-│       └── usuario_service.py            # Operações de usuário
+│   └── testes_unitarios/
+│       ├── __init__.py
+│       ├── test_categorias.py
+│       ├── test_colecao.py
+│       ├── test_jogo.py
+│       └── test_usuario.py
 │
-├── tests/                                # Testes automatizados com pytest
-│   ├── __init__.py
-│   ├── test_categorias.py                # Testes unitários para as subclasses de Jogo
-│   ├── test_colecao.py                   # Testes unitários para a classe Colecao
-│   ├── test_jogo.py                      # Testes unitários para a classe base Jogo
-│   ├── test_persistencia.py              # Testes de leitura e salvamento no JSON
-│   ├── test_regras_de_negocio.py         # Testes de integração das regras de negócio
-│   └── test_usuario.py                   # Testes unitários para a classe Usuario
-│
-├── main.py                               # Ponto de entrada CLI (menu interativo do sistema)
-├── README.md                             # Documentação principal e instruções de execução
-└── requirements.txt                      # Dependências externas do projeto Python
+├── .gitignore
+├── main.py                                 # Ponto de entrada CLI
+├── README.md                               # Documentação do projeto
+└── requirements.txt                        # Dependências externas
 ```
+
+---
+
+## 🧪 Cobertura de Testes
+
+
+1. Os **testes unitários** abrangem a criação e a manipulação de objetos das **classes de domínio**:
+
+- Criação validada de Jogos (e suas subclasses), Colecoes e Usuarios
+- Erros ao violar regras lógicas e relacionais (Ex: duplicidade, valores fora do intervalo)
+- Alteração de status do jogo ao registrar progresso, finalizar ou reiniciar
+- Finalização e avaliação do jogo quando permitido
+- Registro de data de início e data de término do jogo
+- Cálculo de atributos derivados (JogoCampanha e JogoCompetitivo)
+- Inclusão e remoção de Colecoes de um Usuario
+
+
+2. Os **testes de integração** concentram-se nas **regras de negócio**, que por sua vez necessitam da atuação simultânea de outras partes do código. Os testes abrangem:
+
+- Proibição de criar jogos duplicados (critério definido no método \_\_eq\_\_)
+- Avaliação somente após finalização do jogo
+- Persistência progressiva de horas jogadas ao registrar progresso
+- Emissão de aviso caso o número de jogos finalizados seja inferior à meta anual
+- Limitação de jogos com status "JOGANDO"
+
+
+🚩 Foram realizados mais de 30 funções de teste, ultrapassando o mínimo estabelecido no pdf.
+
+---
+
+## 📝 Requisitos de POO atentidos pelo projeto
+
+Além da modelagem e herança acima explicados, o projeto contempla:
+
+#### Encapsulamento e validações
+
+- `@property` para validação de **nota de avaliação** (0-10), **horas jogadas** >= 0 e definição de **título não vazio** no âmbito da [classe Jogo](src/models/jogo.py)
+- Validação indireta da alteração de status e avanço de progresso por meio de métodos de instância convencionais
+
+#### Métodos especiais
+
+Foram implementados nas seguintes classes:
+
+- Jogo: `__str__`, `__repr__`, `__eq__`, `__lt__` (exigidos no material)
+- Colecao: `__str__`, `__eq__` (igualdade com base no nome e mesmos jogos), `__gt__` (comparação com base na quantidade de jogos incluídos)
+- Usuario: `__str__`, `__repr__`
+
+#### Persistência
+
+A persistência em JSON foi feita usando dois módulos (ou duas classes): um para **configurações** e outro para os dados do **catálogo** em si:
+
+- CatalogoJSON: contém método de leitura e salvamento (arquivo `catalogo.json`)
+- ConfiguracaoJSON: contém método de leitura e salvamento (arquvio `settings.json`)
+
+Tais classes não são dotadas de especialização, elas só gravam dados genéricos. A especialização é delegada aos módulos de serviço.
+
+> Os módulos de serviço viabilizam a leitura/escrita através dos métodos de serialização (`to_dict()`) e desserialização (`from_dict()`) definidos nas próprias classes de domínio
+
+## 🔨 Instruções de Execução
