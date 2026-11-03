@@ -1,5 +1,7 @@
 ## 🏗️ Estrutura Planejada de Classes (Diagrama UML)
 
+Com o intuito de não poluir a representação visual, decidi omitir os **métodos especiais** e os **atributos derivados** (obtidos via *getters*). Também optei por não representar as duas classes de repositório (CatalogoJSON e ConfiguracaoJSON), uma vez que elas têm estruturas simples e não estão relacionadas ao problema
+
 ```mermaid
 classDiagram
     class Jogo {
@@ -11,6 +13,7 @@ classDiagram
         -float avaliacao
         -date data_inicio
         -date data_termino
+        -int id
         +registrar_progresso()
         +finalizar_jogo()
         +reiniciar_jogo()
@@ -28,9 +31,9 @@ classDiagram
         -int partidas_jogadas
         -int vitorias
         -int derrotas
-        -float taxa_vitoria
         -str ranking_atual
         +registrar_partida()
+        +atualizar_ranking()
     }
 
     class JogoCooperativo {
@@ -44,6 +47,7 @@ classDiagram
     class Colecao {
         -str nome
         -list~Jogo~ jogos
+        -int id
         +adicionar_jogo()
         +remover_jogo()
         +listar_jogos()
@@ -52,15 +56,15 @@ classDiagram
     class Usuario {
         -str nome
         -dict~str, Colecao~ colecoes
-        +criar_colecao()
-        +obter_colecao()
+        -int id
+        +adicionar_colecao()
         +listar_colecoes()
-        +deletar_colecao()
+        +remover_colecao()
     }
 
     Jogo <|-- JogoCampanha
     Jogo <|-- JogoCompetitivo
     Jogo <|-- JogoCooperativo
-    Colecao o-- Jogo
-    Usuario o-- Colecao
+    Colecao "0..*" o-- "0..*" Jogo : agrupa
+    Usuario "0..*" o-- "0..*" Colecao : possui
 ```
