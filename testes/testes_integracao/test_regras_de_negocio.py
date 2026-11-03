@@ -11,10 +11,11 @@ from src.models.categorias import *
 
 import pytest
 
+# Para viabilizar os testes de persistência em um arquivo JSON temporário, tive que usar
+# Monkeypatch: fixture nativa que permite mudar uma variável global de outro módulo apenas durante o teste
+# tmp_path: fixture nativa que cria um arquivo temporário
 
 def test_cadastrar_jogo(monkeypatch, tmp_path):
-    # Monkeypatch: fixture nativa que permite mudar uma variável global de outro módulo apenas no escopo do teste
-    # tmp_path: fixture nativa que cria um arquivo temporário
     monkeypatch.setattr(persistencia, "caminho_padrao", str(tmp_path / "catalogo_temp.json"))
     arquivo_temp = tmp_path / "catalogo_temp.json"
     monkeypatch.setattr(servico_jogos.catalogo, "caminho", arquivo_temp)
