@@ -1,4 +1,4 @@
-## 🏗️ Estrutura Planejada de Classes (Diagrama UML)
+## 🏗️ Estrutura de Classes (Diagrama UML)
 
 Com o intuito de não poluir a representação visual, decidi omitir os **métodos especiais** e os **atributos derivados** (obtidos via *getters*). Também optei por não representar as duas classes de repositório (CatalogoJSON e ConfiguracaoJSON), uma vez que elas têm estruturas simples e não estão relacionadas ao problema
 
@@ -23,7 +23,7 @@ classDiagram
     class JogoCampanha {
         -int capitulos_totais
         -int capitulos_concluidos
-        -float percentual_concluido
+        -float percentual_conclusao
         +avancar_capitulo()
     }
 
@@ -55,7 +55,7 @@ classDiagram
 
     class Usuario {
         -str nome
-        -dict~str, Colecao~ colecoes
+        -list~Colecao~ colecoes
         -int id
         +adicionar_colecao()
         +listar_colecoes()

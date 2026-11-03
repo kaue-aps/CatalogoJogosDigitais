@@ -8,13 +8,14 @@ Sistema de linha de comando (CLI) e gerenciamento de catálogo pessoal de jogos 
 
 O **Catálogo de Jogos Digitais** é uma aplicação voltada para o gerenciamento e acompanhamento de acervos de jogos. O sistema permite cadastrar novos títulos, registrar o progresso de jogatina (horas jogadas e status de conclusão), categorizar os jogos por coleções personalizadas e gerar relatórios estatísticos detalhados sobre o desempenho do jogador.
 
-### Principais Funcionalidades Planejadas:
+### Principais Funcionalidades:
 - **CRUD de Jogos:** Cadastro, leitura, atualização de progresso e exclusão de jogos.
 - **Diferenciação por Tipo de Experiência:** Suporte a jogos de Campanha, Competitivos e Cooperativos.
 - **Gestão de Progresso:** Regras de negócio rigorosas para alteração de status, validação de horas jogadas e avaliações.
 - **Coleções Personalizadas:** Organização de jogos em listas customizadas (ex: *Favoritos*, *Zerados 2026*).
 - **Relatórios Estatísticos:** Métricas de tempo total jogado, média de avaliações, top 5 mais jogados e percentuais de status.
 - **Persistência de Dados:** Salvamento em arquivos JSON.
+- **Emissão de aviso:** Aparece ao exibir configurações caso os jogos finalizados estejam abaixo da meta.
 
 ---
 
@@ -87,6 +88,7 @@ O miniprojeto seguiu uma arquitetura em camadas, isolando as responsabilidades e
 │       └── test_usuario.py
 │
 ├── .gitignore
+├── cli.py                                  # Interface de subcomandos (parsers)
 ├── main.py                                 # Ponto de entrada CLI
 ├── README.md                               # Documentação do projeto
 └── requirements.txt                        # Dependências externas
@@ -113,7 +115,6 @@ O miniprojeto seguiu uma arquitetura em camadas, isolando as responsabilidades e
 - Proibição de criar jogos duplicados (critério definido no método \_\_eq\_\_)
 - Avaliação somente após finalização do jogo
 - Persistência progressiva de horas jogadas ao registrar progresso
-- Emissão de aviso caso o número de jogos finalizados seja inferior à meta anual
 - Limitação de jogos com status "JOGANDO"
 
 
@@ -168,11 +169,11 @@ python -m venv .venv
 
 #### No Windows:
 ```bash
-.\venv\Scripts\activate
+.venv\Scripts\activate
 ```
 #### No Linux/macOS:
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ### 3. Instale as dependências

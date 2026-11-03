@@ -31,7 +31,6 @@ main.py
 ├── colecoes
 │   ├── criar --nome <str>
 │   ├── listar
-│   ├── ver --nome <str>
 │   ├── adicionar-jogo --id-jogo <int> --id-colecao <int>
 │   ├── remover-jogo --id-jogo <int> --id-colecao <int>
 │   └── deletar --id <int>
