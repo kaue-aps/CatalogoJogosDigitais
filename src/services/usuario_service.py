@@ -41,7 +41,7 @@ def cadastrar_usuario(usuario: Usuario) -> None:
         if usuario == Usuario.from_dict(usuario_cadastrado):
             raise PermissionError("O usuário informado já está cadastrado no sistema")
     usuario._id = proximo_id_usuario()
-    dados["usuario"].append(usuario.to_dict())
+    dados["usuarios"].append(usuario.to_dict())
     catalogo.salvar(dados)
 
 

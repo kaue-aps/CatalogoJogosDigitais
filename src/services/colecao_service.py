@@ -32,7 +32,7 @@ def cadastrar_colecao(colecao: Colecao):
         if colecao == Colecao.from_dict(colecao_cadastrada):
             raise PermissionError("A coleção informada já está cadastrado no sistema")
     colecao._id = proximo_id_colecao()
-    dados["colecao"].append(colecao.to_dict())
+    dados["colecoes"].append(colecao.to_dict())
     catalogo.salvar(dados)
 
 

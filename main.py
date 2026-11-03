@@ -178,14 +178,14 @@ def main():
             except Exception as e:
                 print(f"Erro ao listar coleções: {e}")
 
-        elif args.acao == "adicionar_jogo":
+        elif args.acao == "adicionar-jogo":
             try:
                 servico_colecoes.adicionar_jogo_a_colecao(args.id_jogo, args.id_colecao)
                 print(f"Jogo adicionado à coleção!")
             except Exception as e:
                 print(f"Erro ao adicionar jogo à coleção: {e}")
 
-        elif args.acao == "remover_jogo":
+        elif args.acao == "remover-jogo":
             try:
                 servico_colecoes.remover_jogo_da_colecao(args.id_jogo, args.id_colecao)
                 print(f"Jogo removido da coleção!")
