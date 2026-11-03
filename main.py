@@ -98,6 +98,69 @@ def main():
             except Exception as e:
                 print(f"Erro: {e}")
 
+        elif args.acao == "registrar-progresso":
+            try:
+                servico_jogos.registrar_progresso(args.id, args.horas)
+                print(f"Progresso do jogo registrado com sucesso!")
+            except Exception as e:
+                print(f"Erro ao registrar progresso: {e}")
+
+    # === MÓDULO JOGOS CAMPANHA ===
+    elif args.modulo == "jogos-campanha":
+        if args.acao == "avancar-capitulo":
+            try:
+                servico_jogos.avancar_capitulo(args.id, args.capitulos)
+                print(f"Capítulos avançados com sucesso!")
+            except Exception as e:
+                print(f"Erro ao avançar capítulo: {e}")
+
+        elif args.acao == "percentual_conclusao":
+            try:
+                percentual = servico_jogos.percentual_conclusao(args.id)
+                print(f"Conclusão do jogo: {percentual:.1f}%")
+            except Exception as e:
+                print(f"Erro ao consultar percentual de conclusão: {e}")
+
+    # === MÓDULO JOGOS COMPETITIVO ===
+    elif args.modulo == "jogos-competitivo":
+        if args.acao == "atualizar-ranking":
+            try:
+                servico_jogos.atualizar_ranking(args.id, args.novo_ranking)
+                print(f"Ranking do jogo atualizado para {args.novo_ranking}!")
+            except Exception as e:
+                print(f"Erro ao atualizar ranking: {e}")
+
+        elif args.acao == "registrar-partida":
+            try:
+                resultado = "VITORIA" if args.resultado.strip().upper() == "VITÓRIA" else args.resultado
+                servico_jogos.registrar_partida(args.id, resultado)
+                print(f"Partida competitiva registrada!")
+            except Exception as e:
+                print(f"Erro ao registrar partida: {e}")
+
+        elif args.acao == "taxa-vitoria":
+            try:
+                taxa = servico_jogos.taxa_vitoria(args.id)
+                print(f"Taxa de vitória do jogo: {taxa:.1f}%")
+            except Exception as e:
+                print(f"Erro ao consultar taxa de vitória: {e}")
+
+    # === MÓDULO JOGOS COOPERATIVO ===
+    elif args.modulo == "jogos-cooperativo":
+        if args.acao == "adicionar-participante":
+            try:
+                servico_jogos.adicionar_participante(args.id, args.nome)
+                print(f"Participante '{args.nome}' adicionado à lista de frequentes!")
+            except Exception as e:
+                print(f"Erro ao adicionar participante: {e}")
+
+        elif args.acao == "registrar-sessao":
+            try:
+                servico_jogos.registrar_sessao(args.id)
+                print(f"Sessão cooperativa registrada!")
+            except Exception as e:
+                print(f"Erro ao registrar sessão cooperativa: {e}")
+
     # === MÓDULO COLEÇÕES ===
     elif args.modulo == "colecoes":
         if args.acao == "criar":
