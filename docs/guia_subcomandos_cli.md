@@ -1,6 +1,6 @@
 # Guia de subcomandos da CLI
 
-Os comandos abaixo são executados a partir da pasta raiz do projeto com `python main.py`. Argumentos entre `< >` são valores a informar; opções entre `[ ]` são opcionais. Quando indicado, os valores entre chaves representam as escolhas aceitas pelo parser.
+Os comandos abaixo são executados a partir da pasta raiz do projeto, sempre começando com `python main.py`. Argumentos entre `< >` são valores a informar; opções entre `[ ]` são opcionais. Quando indicado, os valores entre chaves representam as escolhas aceitas pelo parser.
 
 ```text
 main.py
@@ -58,7 +58,7 @@ main.py
 
 - Em `jogos cadastrar`, `--tipo` usa `generico` por padrão, `--capitulos-totais` usa `1` e `--max-jogadores` usa `2`.
 - Em `jogos-campanha avancar-capitulo`, `--capitulos` usa `1`.
-- `jogos buscar` aceita os filtros como opcionais; o parser não exige que um deles seja informado.
+- `jogos buscar` aceita os filtros como opcionais; se nada for informado, nada acontece
 - `jogos ordenar` exige `--por`. A ordenação é decrescente por padrão; `--crescente` altera a direção.
 - `config redefinir` aceita qualquer combinação das opções apresentadas. `--generos-favoritos` recebe um ou mais gêneros.
 - `relatorio` é um módulo com a opção obrigatória `--tipo`, não possui subcomandos adicionais.
