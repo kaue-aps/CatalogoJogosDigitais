@@ -57,8 +57,66 @@ def criar_parser():
     p_deletar = subparsers_jogos.add_parser("deletar", help="Remove um jogo do catálogo")
     p_deletar.add_argument("--id", required=True, type=int, help="ID do jogo a ser removido")
 
+    # --- jogos registrar-progresso ---
+    p_registrar_progresso = subparsers_jogos.add_parser("registrar-progresso", help="Adiciona horas de gameplay a um jogo e altera seu status caso ainda não tenha sido iniciado")
+    p_registrar_progresso.add_argument("--id", required=True, type=int, help="ID do jogo")
+    p_registrar_progresso.add_argument("--horas", required=True, type=float, help="Horas a serem contabilizadas")
+
     # =========================================================================
-    # 2. MÓDULO: COLEÇÕES (python main.py colecoes ...)
+    # 2. MÓDULO: JOGOS CAMPANHA (python main.py jogo-campanha ...)
+    # =========================================================================
+
+    parser_jogos_campanha = subparsers_principais.add_parser("jogos-campanha", help="Ações específicas para jogos campanha")
+    subparsers_jogos_campanha = parser_jogos_campanha.add_subparsers(dest="acao", help="Ação em jogos campanha")
+
+    # --- jogos-campanha avancar-capitulo ---
+    p_jc_avancar_capitulo = subparsers_jogos_campanha.add_parser("avancar-capitulo", help="Avança uma determinada quantidade de capítulos do jogo")
+    p_jc_avancar_capitulo.add_argument("--id", required=True, type=int, help="ID do jogo campanha")
+    p_jc_avancar_capitulo.add_argument("--capitulos", type=int, default=1, help="Quantidade de capítulos (padrão é 1)")
+
+    # --- jogos-campanha percentual-conclusao ---
+    p_jc_percentual_conclusao = subparsers_jogos_campanha.add_parser("percentual_conclusao", help="Retorna o percentual de conclusão do jogo")
+    p_jc_percentual_conclusao.add_argument("--id", required=True, type=int, help="ID do jogo campanha")
+
+    # =========================================================================
+    # 3. MÓDULO: JOGOS COMPETITIVO (python main.py jogo-competitivo ...)
+    # =========================================================================
+
+    parser_jogos_competitivo = subparsers_principais.add_parser("jogos-competitivo", help="Ações específicas para jogos competitivos")
+    subparsers_jogos_competitivo = parser_jogos_competitivo.add_subparsers(dest="acao", help="Ação em jogos competitivos")
+
+    # --- jogos-competitivo atualizar-ranking ---
+    p_jct_atualizar_ranking = subparsers_jogos_competitivo.add_parser("atualizar-ranking", help="Muda o ranking do jogador naquele jogo")
+    p_jct_atualizar_ranking.add_argument("--id", required=True, type=int, help="ID do competitivo")
+    p_jct_atualizar_ranking.add_argument("--novo_ranking", required=True, type=str, help="Novo ranking naquele jogo (Ex: Gold, Diamond, Platinum)")
+
+    # --- jogos-competitivo registrar-partida ---
+    p_jct_registrar_partida = subparsers_jogos_competitivo.add_parser("registrar-partida", help="Registra uma partida competitiva e seu resultado ('VITÓRIA' ou 'DERROTA')")
+    p_jct_registrar_partida.add_argument("--id", required=True, type=int, help="ID do jogo competitivo")
+    p_jct_registrar_partida.add_argument("--resultado", required=True, type=str, help="'VITÓRIA' ou 'DERROTA'")
+
+    # --- jogos-competitivo taxa-vitoria ---
+    p_jct_taxa_vitoria = subparsers_jogos_competitivo.add_parser("taxa-vitoria", help="Retorna a taxa de vitória (em porcentagem) de um jogo competitivo")
+    p_jct_taxa_vitoria.add_argument("--id", required=True, type=int, help="ID do jogo competitivo")
+
+    # =========================================================================
+    # 4. MÓDULO: JOGOS COOPERATIVO (python main.py jogo-cooperativo ...)
+    # =========================================================================
+
+    parser_jogos_cooperativo = subparsers_principais.add_parser("jogos-cooperativo", help="Ações específicas para jogos cooperativo")
+    subparsers_jogos_cooperativo = parser_jogos_cooperativo.add_subparsers(dest="acao", help="Ação em jogos cooperativos")
+
+    # --- jogos-cooperativo adicionar-participante ---
+    p_jcp_adicionar_participante = subparsers_jogos_cooperativo.add_parser("adicionar-participante", help="Adiciona o nome de um participante à lista de frequentes")
+    p_jcp_adicionar_participante.add_argument("--id", required=True, type=int, help="ID do jogo cooperativo")
+    p_jcp_adicionar_participante.add_argument("--nome", required=True, type=str, help="Nome do participante")
+
+    # --- jogos-cooperativo resgistrar-sessao ---
+    p_jcp_registrar_sessao = subparsers_jogos_cooperativo.add_parser("registrar-sessao", help="Incrementa o histórico da quantidade de sessões coop realizadas (uma unidade)")
+    p_jcp_registrar_sessao.add_argument("--id", required=True, type=int, help="ID do jogo cooperativo")
+
+    # =========================================================================
+    # 5. MÓDULO: COLEÇÕES (python main.py colecoes ...)
     # =========================================================================
     parser_colecoes = subparsers_principais.add_parser("colecoes", help="Gerenciamento de coleções personalizadas")
     subparsers_colecoes = parser_colecoes.add_subparsers(dest="acao", help="Ação em coleções")
@@ -89,7 +147,7 @@ def criar_parser():
     p_col_del.add_argument("--id", required=True, type=int, help="ID da coleção a apagar")
 
     # =========================================================================
-    # 3. MÓDULO: RELATÓRIOS (python main.py relatorio ...)
+    # 6. MÓDULO: RELATÓRIOS (python main.py relatorio ...)
     # =========================================================================
     parser_relatorio = subparsers_principais.add_parser("relatorio", help="Geração de estatísticas e relatórios do catálogo")
     parser_relatorio.add_argument(
@@ -101,7 +159,7 @@ def criar_parser():
 
 
     # =========================================================================
-    # 4. MÓDULO: CONFIGURAÇÕES (python main.py config ...)
+    # 7. MÓDULO: CONFIGURAÇÕES (python main.py config ...)
     # =========================================================================
     parser_config = subparsers_principais.add_parser("config", help="Configurações do sistema (settings.json)")
     subparsers_config = parser_config.add_subparsers(dest="acao", help="Ação de configuração")
@@ -118,7 +176,7 @@ def criar_parser():
 
 
     # =========================================================================
-    # 5. MÓDULO: USUÁRIOS (python main.py usuarios ...)
+    # 8. MÓDULO: USUÁRIOS (python main.py usuarios ...)
     # =========================================================================
 
     parser_usuarios = subparsers_principais.add_parser("usuarios", help="Gerenciamento de usuários do sistema")
@@ -126,21 +184,21 @@ def criar_parser():
 
     # --- usuarios cadastrar ---
     p_user_cadastrar = subparsers_usuarios.add_parser("cadastrar", help="Cadastra um novo usuário no sistema")
-    p_user_cadastrar.add_argument("--nome", required=True, type="str", help="Nome ou nickname do usuário")
+    p_user_cadastrar.add_argument("--nome", required=True, type=str, help="Nome ou nickname do usuário")
 
     # --- usuarios deletar ---
     p_user_deletar = subparsers_usuarios.add_parser("deletar", help="Exclui um usuário existente do sistema")
-    p_user_deletar.add_argument("--id", required=True, type="int", help="ID do usuário cadastrado")
+    p_user_deletar.add_argument("--id", required=True, type=int, help="ID do usuário cadastrado")
 
     # --- usuarios adicionar-colecao ---
     p_user_add = subparsers_usuarios.add_parser("adicionar-colecao", help="Adiciona uma coleção existente à lista de coleções do usuário")
-    p_user_add.add_argument("--id-colecao", required=True, type="int", help="ID da coleção")
-    p_user_add.add_argument("--id-usuario", required=True, type="int", help="ID do usuario")
+    p_user_add.add_argument("--id-colecao", required=True, type=int, help="ID da coleção")
+    p_user_add.add_argument("--id-usuario", required=True, type=int, help="ID do usuario")
 
     # --- usuarios remover-colecao ---
     p_user_remove = subparsers_usuarios.add_parser("remover-colecao", help="Remove uma coleção existente da lista de coleções do usuário")
-    p_user_remove.add_argument("--id-colecao", required=True, type="int", help="ID da coleção")
-    p_user_remove.add_argument("--id-usuario", required=True, type="int", help="ID do usuario")
+    p_user_remove.add_argument("--id-colecao", required=True, type=int, help="ID da coleção")
+    p_user_remove.add_argument("--id-usuario", required=True, type=int, help="ID do usuario")
 
     # --- usuarios listar ---
     subparsers_usuarios.add_parser("listar", help="Lista todos os usuários do sistema")
@@ -151,7 +209,7 @@ def criar_parser():
 
     # --- usuarios resumo ---
     p_user_see = subparsers_usuarios.add_parser("resumo", help="Exibe a quantidade de coleções e de jogos do usuário")
-    p_user_see.add_argument("--id", required=True, type="int", help="ID do usuário")
+    p_user_see.add_argument("--id", required=True, type=int, help="ID do usuário")
 
 
     return parser
