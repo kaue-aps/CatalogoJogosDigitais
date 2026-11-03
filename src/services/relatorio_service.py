@@ -36,33 +36,35 @@ def total_de_horas_jogadas() -> float:
 def media_de_avaliacao_jogos() -> float:
     dados = catalogo.carregar()
     soma = qtd = 0
-    for categoria in dados["jogos"]:
-        for jogo in categoria:
+    for jogos_da_categoria in dados["jogos"].values():
+        for jogo in jogos_da_categoria:
             if jogo["avaliacao"] is not None:
                 soma += jogo["avaliacao"]
                 qtd += 1
 
-    media = soma / qtd
-    return media
+    return soma / qtd if qtd else 0.0
 
 def percentual_de_jogos_por_status() -> dict:
     dados = catalogo.carregar()
     nao_iniciados = jogando = finalizados = 0
     total_jogos = 0
-    for categoria in dados["jogos"]:
-            for jogo in categoria:
-                if jogo["status"] == "NÃO INICIADO":
-                    nao_iniciados += 1
-                elif jogo["status"] == "JOGANDO":
-                    jogando += 1
-                elif jogo["status"] == "FINALIZADO":
-                    finalizados += 1
+    for jogos_da_categoria in dados["jogos"].values():
+        for jogo in jogos_da_categoria:
+            if jogo["status"] == "NÃO INICIADO":
+                nao_iniciados += 1
+            elif jogo["status"] == "JOGANDO":
+                jogando += 1
+            elif jogo["status"] == "FINALIZADO":
+                finalizados += 1
 
-                total_jogos += 1
+            total_jogos += 1
 
-    percentual_nao_iniciados = (nao_iniciados / total_jogos) * 100
-    percentual_jogando = (jogando / total_jogos) * 100
-    percentual_finalizados = (finalizados / total_jogos) * 100
+    if total_jogos == 0:
+        percentual_nao_iniciados = percentual_jogando = percentual_finalizados = 0.0
+    else:
+        percentual_nao_iniciados = (nao_iniciados / total_jogos) * 100
+        percentual_jogando = (jogando / total_jogos) * 100
+        percentual_finalizados = (finalizados / total_jogos) * 100
 
     return {
         "NÃO INICIADO": percentual_nao_iniciados,
@@ -73,33 +75,26 @@ def percentual_de_jogos_por_status() -> dict:
 def top_5_jogos_mais_jogados():
     dados = catalogo.carregar()
     todos_jogos = []
-    for categoria in dados["jogos"]:
-        for jogo in categoria:
-            todos_jogos.extend(jogo) # Vai adicionando os jogos em forma de dicionário à lista
+    classes_por_categoria = {
+        "genericos": Jogo,
+        "campanha": JogoCampanha,
+        "competitivo": JogoCompetitivo,
+        "cooperativo": JogoCooperativo,
+    }
 
-    jogos_em_ordem_descrescente = sorted(todos_jogos,
-                                        key=lambda jogo: jogo["horas_jogadas"],
-                                        reverse=True)
-    
-    top_5_lista = jogos_em_ordem_descrescente[:5] # Pega os primeiros cinco usando fatiamento de string
+    for categoria, jogos_da_categoria in dados["jogos"].items():
+        for jogo in jogos_da_categoria:
+            todos_jogos.append((categoria, jogo))
 
-    top_5_dict = {} # Dicionário do top 5 com chaves em números ordinais
+    jogos_em_ordem_descrescente = sorted(
+        todos_jogos,
+        key=lambda item: item[1]["horas_jogadas"],
+        reverse=True,
+    )
 
-    # Loop que coloca os jogos já instanciados em top_5_dict
-    for i in range(0, 5):
-        jogo = top_5_lista[i]
-
-        # Verificação para instanciar corretamente a depender da categoria do jogo
-        if jogo in dados["jogos"]["genericos"]:
-            top_5_dict[f"{i + 1}º"] = Jogo.from_dict(jogo)
-
-        elif jogo in dados["jogos"]["campanha"]:
-            top_5_dict[f"{i + 1}º"] = JogoCampanha.from_dict(jogo)
-
-        elif jogo in dados["jogos"]["competitivo"]:
-            top_5_dict[f"{i + 1}º"] = JogoCompetitivo.from_dict(jogo)
-
-        elif jogo in dados["jogos"]["cooperativo"]:
-            top_5_dict[f"{i + 1}º"] = JogoCooperativo.from_dict(jogo)
+    top_5_dict = {}
+    for i, (categoria, dados_jogo) in enumerate(jogos_em_ordem_descrescente[:5], start=1):
+        classe_jogo = classes_por_categoria[categoria]
+        top_5_dict[f"{i}º"] = classe_jogo.from_dict(dados_jogo)
 
     return top_5_dict

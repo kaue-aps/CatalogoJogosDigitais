@@ -171,6 +171,13 @@ def main():
             except Exception as e:
                 print(f"Erro ao criar coleção: {e}")
 
+        elif args.acao == "listar":
+            try:
+                for colecao in servico_colecoes.listar_colecoes():
+                    print(colecao)
+            except Exception as e:
+                print(f"Erro ao listar coleções: {e}")
+
         elif args.acao == "adicionar_jogo":
             try:
                 servico_colecoes.adicionar_jogo_a_colecao(args.id_jogo, args.id_colecao)
@@ -208,17 +215,14 @@ def main():
 
         elif args.tipo == "percentual-por-status":
             valores = servico_relatorios.percentual_de_jogos_por_status() # retorna um dicionário
-            print(f"NÃO INICIADOS: {valores["NAO INICIADO"]}%\n"
+            print(f"NÃO INICIADOS: {valores["NÃO INICIADO"]}%\n"
                   f"JOGANDO: {valores["JOGANDO"]}%\n"
                   f"FINALIZADOS: {valores["FINALIZADO"]}%")
 
         elif args.tipo == "top5-mais-jogados":
             top5 = servico_relatorios.top_5_jogos_mais_jogados()
-            print(f"1º - {top5["1º"].titulo} - {top5["1º"].horas_jogadas}h")
-            print(f"2º - {top5["2º"].titulo} - {top5["2º"].horas_jogadas}h")
-            print(f"3º - {top5["3º"].titulo} - {top5["3º"].horas_jogadas}h")
-            print(f"4º - {top5["4º"].titulo} - {top5["4º"].horas_jogadas}h")
-            print(f"5º - {top5["5º"].titulo} - {top5["5º"].horas_jogadas}h")
+            for posicao, jogo in top5.items():
+                print(f"{posicao} - {jogo.titulo} - {jogo.horas_jogadas}h")
 
     # === MÓDULO CONFIGURAÇÕES ===
     elif args.modulo == "config":
@@ -290,13 +294,13 @@ def main():
 
         elif args.acao == "listar-colecoes":
             try:
-                print(servico_usuarios.listar_colecoes(args.id_usuario))
+                print(servico_usuarios.listar_colecoes(args.id))
             except Exception as e:
                 print(f"Erro ao listar coleções do usuário: {e}")
 
         elif args.acao == "resumo":
             try:
-                print(servico_usuarios.get_by_id(args.id_usuario))
+                print(servico_usuarios.get_by_id(args.id))
             except Exception as e:
                 print(f"Erro ao exibir resumo do usuário: {e}")
 

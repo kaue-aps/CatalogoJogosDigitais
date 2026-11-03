@@ -8,7 +8,6 @@ Responsabilidades:
 
 from src.repositories.persistencia import CatalogoJSON
 from src.models.colecao import Colecao
-import src.services.jogos_service as servico_jogo
 
 caminho = "data/catalogo.json"
 catalogo = CatalogoJSON(caminho)
@@ -75,4 +74,10 @@ def remover_jogo_da_colecao(id_do_jogo: int, id_da_colecao: int):
                 catalogo.salvar(dados)
                 return
 
-            
+def listar_colecoes():
+    dados = catalogo.carregar()
+    lista_colecoes = []
+    for colecao in dados["colecoes"]:
+        lista_colecoes.append(Colecao.from_dict(colecao))
+
+    return lista_colecoes
