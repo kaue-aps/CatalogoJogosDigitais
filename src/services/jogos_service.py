@@ -186,6 +186,87 @@ def avaliar_jogo(id: int, nota: float) -> None:
     atualizar_jogo(id, {"avaliacao": jogo_objeto.avaliacao}) # Persistência
 
 
+def avancar_capitulo(id: int, capitulos: int = 1) -> None:
+    """Avança capítulos de uma campanha e persiste o progresso."""
+
+    jogo = get_by_id(id)
+    if not isinstance(jogo, JogoCampanha):
+        raise TypeError("O jogo informado não é do tipo campanha.")
+
+    jogo.avancar_capitulo(capitulos)
+    atualizar_jogo(id, {"capitulos_concluidos": jogo.capitulos_concluidos})
+
+
+def percentual_conclusao(id: int) -> float:
+    """Retorna o percentual de conclusão de uma campanha."""
+
+    jogo = get_by_id(id)
+    if not isinstance(jogo, JogoCampanha):
+        raise TypeError("O jogo informado não é do tipo campanha.")
+
+    return jogo.percentual_conclusao
+
+
+def atualizar_ranking(id: int, novo_ranking: str) -> None:
+    """Atualiza e persiste o ranking de um jogo competitivo."""
+
+    jogo = get_by_id(id)
+    if not isinstance(jogo, JogoCompetitivo):
+        raise TypeError("O jogo informado não é do tipo competitivo.")
+
+    jogo.atualizar_ranking(novo_ranking)
+    atualizar_jogo(id, {"ranking_atual": jogo.ranking_atual})
+
+
+def registrar_partida(id: int, resultado: str) -> None:
+    """Registra e persiste o resultado de uma partida competitiva."""
+
+    jogo = get_by_id(id)
+    if not isinstance(jogo, JogoCompetitivo):
+        raise TypeError("O jogo informado não é do tipo competitivo.")
+
+    jogo.registrar_partida(resultado)
+    atualizar_jogo(id, {
+        "partidas_jogadas": jogo.partidas_jogadas,
+        "vitorias": jogo.vitorias,
+        "derrotas": jogo.derrotas,
+    })
+
+
+def taxa_vitoria(id: int) -> float:
+    """Retorna a taxa de vitória de um jogo competitivo."""
+
+    jogo = get_by_id(id)
+    if not isinstance(jogo, JogoCompetitivo):
+        raise TypeError("O jogo informado não é do tipo competitivo.")
+
+    if jogo.partidas_jogadas == 0:
+        return 0.0
+    return jogo.taxa_vitoria
+
+
+def adicionar_participante(id: int, nome: str) -> None:
+    """Adiciona e persiste um participante frequente de um jogo cooperativo."""
+
+    jogo = get_by_id(id)
+    if not isinstance(jogo, JogoCooperativo):
+        raise TypeError("O jogo informado não é do tipo cooperativo.")
+
+    jogo.adicionar_participante(nome)
+    atualizar_jogo(id, {"participantes_frequentes": jogo._participantes_frequentes})
+
+
+def registrar_sessao(id: int) -> None:
+    """Registra e persiste uma sessão cooperativa."""
+
+    jogo = get_by_id(id)
+    if not isinstance(jogo, JogoCooperativo):
+        raise TypeError("O jogo informado não é do tipo cooperativo.")
+
+    jogo.registrar_sessao()
+    atualizar_jogo(id, {"sessoes_coop": jogo.sessoes_coop})
+
+
 def listar_jogos() -> list:
     """Retorna todos os jogos do catalogo de forma instanciada em uma lista"""
     dados = catalogo.carregar()
