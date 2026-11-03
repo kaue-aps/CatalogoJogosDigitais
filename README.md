@@ -150,3 +150,132 @@ Tais classes não são dotadas de especialização, elas só gravam dados genér
 > Os módulos de serviço viabilizam a leitura/escrita através dos métodos de serialização (`to_dict()`) e desserialização (`from_dict()`) definidos nas próprias classes de domínio
 
 ## 🔨 Instruções de Execução
+
+### 1. Clone o repositório e acesse a pasta raiz do projeto
+
+```bash
+git clone https://github.com/kaue-aps/CatalogoJogosDigitais.git
+cd CatalogoJogosDigitais
+```
+
+### 2. Crie e ative um ambiente virtual (Recomendado)
+
+Isola as dependências e evita conflitos com bibliotecas já instaladas no sistema
+
+```bash
+python -m venv .venv
+```
+
+#### No Windows:
+```bash
+.\venv\Scripts\activate
+```
+#### No Linux/macOS:
+```bash
+source venv/bin/activate
+```
+
+### 3. Instale as dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Para executar os testes automatizados
+
+Use `-v` para exibição detalhada:
+```bash
+python -m pytest -v
+```
+
+## 💻 Exemplos de execução dos subcomandos
+
+Execute os comandos na raiz do projeto. Os IDs são atribuídos automaticamente ao cadastrar jogos, coleções e usuários; substitua os valores de exemplo pelos IDs existentes no seu catálogo.
+
+### Jogos
+
+```bash
+# Cadastrar jogos de cada categoria
+python main.py jogos cadastrar --titulo "Hades" --genero "Rogue-like" --plataforma "PC"
+python main.py jogos cadastrar --titulo "Hollow Knight" --genero "Aventura" --plataforma "PC" --tipo campanha --capitulos-totais 20
+python main.py jogos cadastrar --titulo "Valorant" --genero "FPS" --plataforma "PC" --tipo competitivo
+python main.py jogos cadastrar --titulo "It Takes Two" --genero "Aventura" --plataforma "Console" --tipo cooperativo --max-jogadores 2
+
+# Listar, buscar e ordenar jogos
+python main.py jogos listar
+python main.py jogos buscar --titulo "Hollow"
+python main.py jogos buscar --genero "FPS"
+python main.py jogos buscar --status "JOGANDO"
+python main.py jogos buscar --plataforma "PC"
+python main.py jogos ordenar --por avaliacao
+python main.py jogos ordenar --por horas --crescente
+
+# Registrar progresso, avaliar e remover um jogo
+python main.py jogos registrar-progresso --id 1 --horas 2.5
+python main.py jogos avaliar --id 1 --nota 9.0
+python main.py jogos deletar --id 1
+```
+
+### Jogos de campanha
+
+```bash
+python main.py jogos-campanha avancar-capitulo --id 2 --capitulos 3
+python main.py jogos-campanha percentual_conclusao --id 2
+```
+
+### Jogos competitivos
+
+```bash
+python main.py jogos-competitivo atualizar-ranking --id 3 --novo_ranking "Gold"
+python main.py jogos-competitivo registrar-partida --id 3 --resultado "VITÓRIA"
+python main.py jogos-competitivo registrar-partida --id 3 --resultado "DERROTA"
+python main.py jogos-competitivo taxa-vitoria --id 3
+```
+
+### Jogos cooperativos
+
+```bash
+python main.py jogos-cooperativo adicionar-participante --id 4 --nome "Ana"
+python main.py jogos-cooperativo registrar-sessao --id 4
+```
+
+### Coleções
+
+```bash
+python main.py colecoes criar --nome "Favoritos"
+python main.py colecoes deletar --id 1
+```
+
+
+### Relatórios
+
+```bash
+python main.py relatorio --tipo total-jogos
+python main.py relatorio --tipo total-horas
+python main.py relatorio --tipo top5-mais-jogados
+python main.py relatorio --tipo percentual-por-status
+python main.py relatorio --tipo media-avaliacao
+```
+
+### Configurações
+
+```bash
+python main.py config exibir
+python main.py config redefinir --meta-anual 20
+python main.py config redefinir --plataforma-principal PC
+python main.py config redefinir --limite-andamento 4
+python main.py config redefinir --generos-favoritos RPG Aventura Estratégia
+```
+
+### Usuários
+
+```bash
+python main.py usuarios cadastrar --nome "jogador1"
+python main.py usuarios listar
+python main.py usuarios adicionar-colecao --id-colecao 1 --id-usuario 1
+python main.py usuarios remover-colecao --id-colecao 1 --id-usuario 1
+python main.py usuarios deletar --id 1
+python main.py usuarios listar-colecoes --id
+python main.py usuarios resumo --id
+```
+
